@@ -4,7 +4,9 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="description" content="Sketch a mobile crane lift plan in elevation view and export it as PNG.">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%23f2b300'/%3E%3Cpath d='M12 52h40M18 52V40h16v12M22 40l26-26M48 14v22' stroke='%2314213d' stroke-width='5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="manifest" href="manifest.webmanifest">
 <style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font-size:14px}img{max-width:100%}[hidden]{display:none!important}</style>
 <title>Lift Plan Sketch</title>
 <meta name="theme-color" content="#f2b300">
@@ -50,8 +52,23 @@ dialog p{margin:8px 0;font-size:.9rem}
 .ghost{background:var(--bg);color:var(--ink);border:1px solid var(--line);max-width:none;min-height:44px;margin:8px 0 0}
 .g .ghost{margin:0;justify-self:end;width:auto}
 small{color:var(--muted);display:block;margin-top:6px}
+.files{background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:10px 12px 12px;margin-bottom:14px;display:flex;flex-direction:column;gap:10px}
+.fname{margin:0;font-size:.95rem;overflow-wrap:anywhere}
+.fname b{font-family:var(--display)}
+.fname span{color:var(--muted);font-size:.8rem;margin-left:8px}
+h2{font:700 1.1rem/1.2 var(--display);margin:2px 0 12px}
+dialog form{display:flex;flex-direction:column;gap:10px}
+#list{display:flex;flex-direction:column;max-height:50vh;overflow-y:auto;border-top:1px solid var(--line)}
+.srow{display:flex;gap:8px;align-items:center;flex-wrap:wrap;padding:10px 0;border-bottom:1px solid var(--line)}
+.srow .meta{flex:1 1 150px;min-width:0;display:flex;flex-direction:column;overflow-wrap:anywhere}
+.srow .meta span{color:var(--muted);font-size:.8rem}
+.srow button{width:auto;max-width:none;margin:0;min-height:44px;background:var(--bg);color:var(--ink);border:1px solid var(--line)}
+.srow button.pri{background:var(--accent);color:var(--accent-ink);border:0}
+.srow button.del{color:var(--warn)}
 .hit{touch-action:none;cursor:grab}
-h1,legend,label,button,select,input{text-transform:uppercase}
+#sk{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+#sk image{-webkit-user-drag:none}
+h1,h2,legend,label,button,select,input,.fname,.srow b{text-transform:uppercase}
 legend,label,button{letter-spacing:.02em}
 @media (min-width:920px){
 main{max-width:1240px}
@@ -64,6 +81,10 @@ main{max-width:1240px}
 <body>
 <main>
 <h1>Lift Plan Sketch</h1>
+<div class="files">
+<p class="fname">Sketch: <b id="curname">Untitled</b><span id="savestat" role="status"></span></p>
+<div class="row"><button id="newbtn" type="button">New Sketch</button><button id="savebtn" class="pri" type="button">Save</button><button id="openbtn" type="button">Saved Sketches</button></div>
+</div>
 <div class="lay">
 <div class="sheetwrap"><div class="sheet">
 <svg id="sk" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 600 660" font-family="Arial, Helvetica, sans-serif">
@@ -173,7 +194,7 @@ main{max-width:1240px}
 <path d="M391 262 h18 l2 6 v12 l-4 5 h-14 l-4 -5 v-12 z" fill="#f1e08c"/><circle cx="400" cy="271" r="4.5" fill="#c9ced6"/><path d="M389 276 h22" stroke-width="1.1"/>
 <path d="M400 285 v6 a7 7 0 1 1 -7 7" stroke-width="3" stroke-linecap="round"/></g>
 <!-- load -->
-<g id="mesh" class="hit"><g stroke="#232a36" stroke-width="1.2"><g fill="#cfd5de"><rect x="299.5" y="392" width="9" height="124"/><rect x="327.9" y="392" width="7" height="124"/><rect x="355.4" y="392" width="7" height="124"/><rect x="382.8" y="392" width="7" height="124"/><rect x="410.2" y="392" width="7" height="124"/><rect x="437.6" y="392" width="7" height="124"/><rect x="465.1" y="392" width="7" height="124"/><rect x="491.5" y="392" width="9" height="124"/></g><g fill="#eef0f2"><rect x="298" y="396.5" width="204" height="7"/><rect x="298" y="426.5" width="204" height="7"/><rect x="298" y="456.5" width="204" height="7"/><rect x="298" y="486.5" width="204" height="7"/><rect x="298" y="510.5" width="204" height="7"/></g><g fill="#dfe9f3"><rect x="297" y="385" width="14" height="8"/><rect x="393" y="385" width="14" height="8"/><rect x="489" y="385" width="14" height="8"/></g></g>
+<g id="mesh" class="hit"><rect x="296" y="384" width="208" height="136" fill="transparent"/><g stroke="#232a36" stroke-width="1.2"><g fill="#cfd5de"><rect x="299.5" y="392" width="9" height="124"/><rect x="327.9" y="392" width="7" height="124"/><rect x="355.4" y="392" width="7" height="124"/><rect x="382.8" y="392" width="7" height="124"/><rect x="410.2" y="392" width="7" height="124"/><rect x="437.6" y="392" width="7" height="124"/><rect x="465.1" y="392" width="7" height="124"/><rect x="491.5" y="392" width="9" height="124"/></g><g fill="#eef0f2"><rect x="298" y="396.5" width="204" height="7"/><rect x="298" y="426.5" width="204" height="7"/><rect x="298" y="456.5" width="204" height="7"/><rect x="298" y="486.5" width="204" height="7"/><rect x="298" y="510.5" width="204" height="7"/></g><g fill="#dfe9f3"><rect x="297" y="385" width="14" height="8"/><rect x="393" y="385" width="14" height="8"/><rect x="489" y="385" width="14" height="8"/></g></g>
 <g fill="#fff" stroke="#7b3fa0" stroke-width="2.5"><circle cx="305" cy="503" r="6"/><circle cx="495" cy="503" r="6"/></g><g stroke="#7b3fa0" stroke-width="3"><line x1="300" y1="511" x2="310" y2="511"/><line x1="490" y1="511" x2="500" y2="511"/></g></g>
 <image id="img" class="hit" x="298" y="384" width="204" height="136" preserveAspectRatio="xMidYMax meet" visibility="hidden"/>
 <g id="sl"></g>
@@ -263,6 +284,22 @@ main{max-width:1240px}
 <div class="row"><button id="save" class="pri" type="button">Save PNG</button><button id="share" type="button" hidden>Share</button><button id="close" type="button">Close</button></div>
 </dialog>
 
+<dialog id="newdlg">
+<form id="newform">
+<h2 id="newtitle">New Lifting Sketch</h2>
+<label>File Name<input id="newname" type="text" autocomplete="off" maxlength="40"></label>
+<p id="newmsg" class="status"></p>
+<div class="row"><button class="pri" type="submit">Create</button><button id="newopen" type="button">Open Saved Sketch</button><button id="newcancel" type="button">Cancel</button></div>
+</form>
+</dialog>
+
+<dialog id="listdlg">
+<h2>Saved Sketches</h2>
+<div id="list"></div>
+<p id="listmsg" class="status"></p>
+<div class="row"><button id="listnew" type="button">New Sketch</button><button id="listclose" type="button">Close</button></div>
+</dialog>
+
 <script>
 (function(){
 var $=function(i){return document.getElementById(i)};
@@ -281,7 +318,10 @@ el.addEventListener("pointerdown",function(e){try{el.setPointerCapture(e.pointer
 el.addEventListener("pointermove",function(e){if(!on)return;var q=svgPt(e);move(q.x-ox,q.y-oy)});
 el.addEventListener("pointerup",function(){on=0});
 el.addEventListener("pointercancel",function(){on=0});
+el.addEventListener("touchstart",function(e){e.preventDefault()},{passive:false});
+el.addEventListener("touchmove",function(e){e.preventDefault()},{passive:false});
 }
+$("sk").addEventListener("dragstart",function(e){e.preventDefault()});
 
 /* gear rows */
 function row(){
@@ -320,6 +360,7 @@ t._fit=function(){try{var b=t.getBBox();r.setAttribute("x",b.x-7);r.setAttribute
 drag(r,function(){return[+t.getAttribute("x"),+t.getAttribute("y")]},function(x,y){t._moved=1;t.setAttribute("x",cl(x,12,588));t.setAttribute("y",cl(y,20,574));t._fit()});
 }
 function fitLabels(){LBL.forEach(function(id){var t=$(id);if(t._fit)t._fit()})}
+var LBLDEF={};LBL.forEach(function(id){LBLDEF[id]=[+$(id).getAttribute("x"),+$(id).getAttribute("y")]});
 LBL.forEach(dragLabel);
 
 /* sling points with shackles */
@@ -398,7 +439,7 @@ drag(tip,function(){return[row._tx,row._ty]},function(x,y){row._tx=cl(x,10,590);
 }
 
 /* load picture -> sketch */
-var photo=null,img=$("img"),stat=$("phstat");
+var photo=null,photoSrc="",img=$("img"),stat=$("phstat");
 function say(t,err){stat.textContent=t;stat.className="status full"+(err?" err":"")}
 function lum(d,i){return .299*d[i]+.587*d[i+1]+.114*d[i+2]}
 function guessStyle(im){
@@ -455,7 +496,12 @@ fr.onerror=function(){say("Could not read that file. Try a JPG or PNG.",1)};
 fr.onload=function(){
 var im=new Image();
 im.onerror=function(){say("This picture format is not supported here. Save it as JPG or PNG and try again.",1)};
-im.onload=function(){photo=im;$("lstyle").value=guessStyle(im);say("Picture added"+(f.name?": "+f.name:"")+". Change the style, detail or size to suit the load.");sketch()};
+im.onload=function(){
+var sc=Math.min(1,800/Math.max(im.naturalWidth,im.naturalHeight)),c=document.createElement("canvas");
+c.width=Math.max(8,Math.round(im.naturalWidth*sc));c.height=Math.max(8,Math.round(im.naturalHeight*sc));
+var x=c.getContext("2d");x.fillStyle="#fff";x.fillRect(0,0,c.width,c.height);x.drawImage(im,0,0,c.width,c.height);
+photoSrc=c.toDataURL("image/jpeg",.88);touch();
+photo=im;$("lstyle").value=guessStyle(im);say("Picture added"+(f.name?": "+f.name:"")+". Change the style, detail or size to suit the load.");sketch()};
 im.src=fr.result;
 };
 fr.readAsDataURL(f);
@@ -468,7 +514,7 @@ document.addEventListener("paste",function(e){var f=e.clipboardData&&e.clipboard
 $("lstyle").addEventListener("change",sketch);
 $("detail").addEventListener("input",sketch);
 $("lsize").addEventListener("input",sizeLoad);
-$("usemesh").addEventListener("click",function(){photo=null;$("photo").value="";img.setAttribute("visibility","hidden");$("mesh").setAttribute("visibility","visible");say("Default mesh sketch is shown.")});
+$("usemesh").addEventListener("click",function(){photo=null;photoSrc="";$("photo").value="";img.setAttribute("visibility","hidden");$("mesh").setAttribute("visibility","visible");say("Default mesh sketch is shown.")});
 
 [img,$("mesh")].forEach(function(el){
 drag(el,function(){return[lo.x,lo.y]},function(x,y){
@@ -478,6 +524,120 @@ sizeLoad();drawSl();
 });
 });
 sizeLoad();drawSl();update();
+
+/* save and load sketches */
+var cur="",dirty=0,FIELDS=["proj","dwg","by","radius","height","angle","boom","slingang","slinglen","ltype","ll","lw","lh"];
+function showStat(msg){$("curname").textContent=cur||"Untitled";$("savestat").textContent=msg||(dirty?"Not saved":(cur?"Saved":""))}
+function touch(){dirty=1;showStat()}
+document.querySelector(".lay").addEventListener("input",touch);
+$("sk").addEventListener("pointerup",touch);
+document.querySelector(".form").addEventListener("click",function(e){if(e.target.closest("button"))touch()});
+function getState(){
+var f={},lab={};
+FIELDS.forEach(function(k){f[k]=$(k).value});
+LBL.forEach(function(id){var t=$(id);if(t._moved)lab[id]=[+t.getAttribute("x"),+t.getAttribute("y")]});
+return{v:1,fields:f,labels:lab,photo:photoSrc||"",
+gear:[].slice.call($("gear").children).map(function(r){return{t:r.querySelector(".gt").value,q:r.querySelector(".gq").value,d:r.querySelector(".gd").value,p:[r._lx,r._ly,r._tx,r._ty]}}),
+pts:pts.map(function(p){return[p.x,p.y]}),lo:[lo.x,lo.y],lsize:$("lsize").value,detail:$("detail").value,lstyle:$("lstyle").value};
+}
+function setState(st){
+st=st||{};var f=st.fields||{};
+FIELDS.forEach(function(k){$(k).value=f[k]||""});
+$("gear").innerHTML="";
+(st.gear&&st.gear.length?st.gear:[{}]).forEach(function(g){
+row();var r=$("gear").lastChild;
+r.querySelector(".gt").value=g.t||"";r.querySelector(".gq").value=g.q||"";r.querySelector(".gd").value=g.d||"";
+if(g.p){r._lx=g.p[0];r._ly=g.p[1];r._tx=g.p[2];r._ty=g.p[3]}
+});
+pts=(st.pts&&st.pts.length?st.pts:[[318,392],[482,392]]).map(function(a){return{x:a[0],y:a[1]}});
+lo.x=st.lo?st.lo[0]:0;lo.y=st.lo?st.lo[1]:0;
+$("lsize").value=st.lsize||100;$("detail").value=st.detail||55;$("lstyle").value=st.lstyle||"ink";
+LBL.forEach(function(id){var t=$(id),p=st.labels&&st.labels[id];t._moved=p?1:0;t.setAttribute("x",p?p[0]:LBLDEF[id][0]);t.setAttribute("y",p?p[1]:LBLDEF[id][1])});
+photo=null;photoSrc="";$("photo").value="";img.setAttribute("visibility","hidden");$("mesh").setAttribute("visibility","visible");
+say("No picture yet. The default mesh sketch is shown.");
+if(st.photo){var im=new Image();im.onload=function(){photo=im;photoSrc=st.photo;sketch();say("Picture loaded from the saved sketch.")};im.src=st.photo}
+sizeLoad();drawSl();update();
+}
+var store=(function(){
+var db=null,KEY="liftplan.sketches";
+var ready=new Promise(function(res){
+try{var r=indexedDB.open("liftplan",1);
+r.onupgradeneeded=function(){r.result.createObjectStore("sketches",{keyPath:"name"})};
+r.onsuccess=function(){db=r.result;res()};r.onerror=function(){res()};r.onblocked=function(){res()}}catch(e){res()}
+setTimeout(res,2500);
+});
+function ls(){try{return JSON.parse(localStorage.getItem(KEY)||"{}")}catch(e){return{}}}
+function idb(mode,op){return new Promise(function(res,rej){
+var tx=db.transaction("sketches",mode),rq=op(tx.objectStore("sketches"));
+tx.oncomplete=function(){res(rq.result)};tx.onerror=tx.onabort=function(){rej(tx.error||new Error("storage"))}})}
+function run(viaDb,viaLs){return ready.then(function(){return db?idb(viaDb[0],viaDb[1]):new Promise(function(res,rej){try{res(viaLs())}catch(e){rej(e)}})})}
+return{
+list:function(){return run(["readonly",function(s){return s.getAll()}],function(){var o=ls();return Object.keys(o).map(function(k){return o[k]})})
+.then(function(a){return(a||[]).map(function(x){return{name:x.name,updated:x.updated}}).sort(function(a,b){return b.updated-a.updated})})},
+get:function(n){return run(["readonly",function(s){return s.get(n)}],function(){return ls()[n]})},
+put:function(rec){return run(["readwrite",function(s){return s.put(rec)}],function(){var o=ls();o[rec.name]=rec;localStorage.setItem(KEY,JSON.stringify(o))})},
+del:function(n){return run(["readwrite",function(s){return s["delete"](n)}],function(){var o=ls();delete o[n];localStorage.setItem(KEY,JSON.stringify(o))})}
+};
+})();
+function saveNow(){
+return store.put({name:cur,updated:Date.now(),state:getState()}).then(function(){dirty=0;showStat("Saved "+new Date().toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit"}))})
+["catch"](function(){showStat("Could not save. Storage may be full. Delete old sketches and try again.")});
+}
+var newMode="new";
+function openNew(mode){
+newMode=mode;
+$("newtitle").textContent=mode==="new"?"New Lifting Sketch":"Name This Sketch";
+$("newmsg").className="status";
+$("newmsg").textContent=mode==="new"?(dirty?"Changes to the current sketch that are not saved will be lost.":"Enter a file name to start. You will use it to open this sketch later."):"Enter a file name to save this sketch.";
+$("newname").value="";
+if($("listdlg").open)$("listdlg").close();
+if(!$("newdlg").open)$("newdlg").showModal();
+$("newname").focus();
+}
+$("newform").addEventListener("submit",function(e){
+e.preventDefault();
+var n=$("newname").value.trim().replace(/\s+/g," ").toUpperCase(),m=$("newmsg");
+if(!n){m.className="status err";m.textContent="Enter a file name.";return}
+store.get(n).then(function(ex){
+if(ex){m.className="status err";m.textContent="A sketch named "+n+" already exists. Open it from Saved Sketches or choose another name.";return}
+if(newMode==="new")setState({});
+cur=n;$("newdlg").close();saveNow();
+})["catch"](function(){if(newMode==="new")setState({});cur=n;dirty=1;$("newdlg").close();showStat()});
+});
+$("newcancel").addEventListener("click",function(){$("newdlg").close()});
+$("newopen").addEventListener("click",openList);
+$("newbtn").addEventListener("click",function(){openNew("new")});
+$("listnew").addEventListener("click",function(){openNew("new")});
+$("savebtn").addEventListener("click",function(){if(cur)saveNow();else openNew("name")});
+$("openbtn").addEventListener("click",openList);
+$("listclose").addEventListener("click",function(){$("listdlg").close()});
+function openList(){
+if($("newdlg").open)$("newdlg").close();
+if(!$("listdlg").open)$("listdlg").showModal();
+renderList();
+}
+function renderList(){
+var box=$("list"),msg=$("listmsg");box.innerHTML="";msg.className="status";msg.textContent="Loading…";
+store.list().then(function(a){
+msg.textContent=a.length?(dirty?"Opening a sketch replaces what is on screen. Save first to keep your changes.":""):"No saved sketches yet. Choose New Sketch, then Save.";
+a.forEach(function(s){
+var r=document.createElement("div");r.className="srow";
+var meta=document.createElement("div");meta.className="meta";
+var b=document.createElement("b");b.textContent=s.name;
+var d=document.createElement("span");d.textContent=new Date(s.updated).toLocaleString("en-GB",{day:"2-digit",month:"short",year:"numeric",hour:"2-digit",minute:"2-digit"});
+meta.appendChild(b);meta.appendChild(d);
+var o=document.createElement("button");o.type="button";o.className="pri";o.textContent="Open";
+o.addEventListener("click",function(){store.get(s.name).then(function(rec){if(!rec){renderList();return}setState(rec.state);cur=rec.name;dirty=0;showStat();$("listdlg").close()})["catch"](function(){msg.className="status err";msg.textContent="Could not open this sketch."})});
+var x=document.createElement("button");x.type="button";x.className="del";x.textContent="Delete";
+x.addEventListener("click",function(){
+if(x.dataset.sure){store.del(s.name).then(function(){if(cur===s.name){dirty=1;showStat()}renderList()})["catch"](function(){msg.className="status err";msg.textContent="Could not delete this sketch."})}
+else{x.dataset.sure="1";x.textContent="Confirm Delete"}
+});
+r.appendChild(meta);r.appendChild(o);r.appendChild(x);box.appendChild(r);
+});
+})["catch"](function(){msg.className="status err";msg.textContent="Saved sketches cannot be read on this device."});
+}
+showStat();openNew("new");
 
 /* export */
 var blobRef=null,dl=null;
@@ -500,7 +660,7 @@ $("hint").textContent="Choose Save PNG to download the drawing, or Share to send
 $("dlg").showModal();
 });
 });
-function fname(){var p=($("dwg").value.trim()||"lift-plan").replace(/[^A-Za-z0-9_-]+/g,"-");return p.toUpperCase()+"-SKETCH.png"}
+function fname(){var p=(cur||$("dwg").value.trim()||"lift-plan").replace(/[^A-Za-z0-9_-]+/g,"-");return p.toUpperCase()+".png"}
 $("share").addEventListener("click",function(){
 if(!blobRef)return;
 var f=new File([blobRef],fname(),{type:"image/png"});
