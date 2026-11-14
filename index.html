@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Sketch a mobile crane lift plan in elevation view and export it as PNG.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%23f2b300'/%3E%3Cpath d='M12 52h40M18 52V40h16v12M22 40l26-26M48 14v22' stroke='%2314213d' stroke-width='5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E">
+<style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font-size:14px}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>Lift Plan Sketch</title>
+<meta name="theme-color" content="#f2b300">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Space+Grotesk:wght@600;700&display=swap">
+<style>
+/* Layout: drawing sheet pinned on the left, input panels scrolling on the right; one column on phones. */
+:root{--bg:#eceef1;--surface:#fff;--ink:#14213d;--muted:#5b6678;--line:#cdd3dc;--accent:#f2b300;--accent-ink:#14213d;--paper:#fff;--warn:#b3261e;
+--display:"Space Grotesk","Segoe UI",Roboto,sans-serif;--body:Inter,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#10151f;--surface:#1a2232;--ink:#eef1f6;--muted:#9aa6ba;--line:#2e3a50;--accent:#f2b300;--accent-ink:#14213d;--paper:#fff;--warn:#ff8a80;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#10151f;--surface:#1a2232;--ink:#eef1f6;--muted:#9aa6ba;--line:#2e3a50;--accent:#f2b300;--accent-ink:#14213d;--paper:#fff;--warn:#ff8a80;color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font:16px/1.4 var(--body)}
+main{max-width:600px;margin:0 auto;padding-block:12px 96px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+h1{font:700 1.3rem/1.2 var(--display);margin:6px 0 12px}
+.lay{display:flex;flex-direction:column;gap:14px}
+.sheet{background:var(--paper);border:1px solid var(--line);border-radius:6px;overflow:hidden}
+.sheet svg{display:block;width:100%;height:auto}
+.form{display:flex;flex-direction:column;gap:14px;min-width:0}
+fieldset{border:1px solid var(--line);border-radius:6px;background:var(--surface);margin:0;padding:10px 12px 12px;min-width:0}
+legend{padding:0 6px;font:700 1rem var(--display)}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+label{display:flex;flex-direction:column;gap:4px;font-size:.85rem;color:var(--muted);min-width:0}
+input,select{font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:10px;width:100%;min-height:44px}
+input:focus-visible,select:focus-visible,button:focus-visible{outline:3px solid var(--accent);outline-offset:1px}
+input[type=range]{padding:0;min-height:32px;accent-color:var(--accent)}
+.full{grid-column:1/-1}
+.drop{border:2px dashed var(--line);border-radius:8px;padding:12px;background:var(--bg);color:var(--ink);font-size:.95rem;gap:8px}
+.drop.over{border-color:var(--accent)}
+.drop input{background:var(--surface)}
+.status{font-size:.85rem;color:var(--muted);margin:0}
+.status.err{color:var(--warn);font-weight:600}
+.bar{position:fixed;left:0;right:0;bottom:0;padding:10px max(16px,env(safe-area-inset-right,0px)) calc(10px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px));background:var(--surface);border-top:1px solid var(--line)}
+button{font:700 1rem var(--body);border:0;border-radius:6px;min-height:48px;padding:0 16px;background:var(--accent);color:var(--accent-ink);width:100%;max-width:568px;display:block;margin:0 auto;cursor:pointer}
+dialog{border:1px solid var(--line);border-radius:8px;background:var(--surface);color:var(--ink);padding:12px;width:min(94vw,560px)}
+dialog img{width:100%;height:auto;display:block;background:var(--paper);max-height:70vh;object-fit:contain}
+dialog p{margin:8px 0;font-size:.9rem}
+.row{display:flex;gap:8px;flex-wrap:wrap}
+.row button{flex:1 1 140px;max-width:none;background:var(--bg);color:var(--ink);border:1px solid var(--line);margin:0}
+.row button.pri{background:var(--accent);color:var(--accent-ink);border:0}
+.g{display:grid;grid-template-columns:1fr 84px;gap:8px;padding:10px 0;border-top:1px solid var(--line)}
+.g:first-of-type{border-top:0;padding-top:0}
+.g .wide{grid-column:1/-1}
+.ghost{background:var(--bg);color:var(--ink);border:1px solid var(--line);max-width:none;min-height:44px;margin:8px 0 0}
+.g .ghost{margin:0;justify-self:end;width:auto}
+small{color:var(--muted);display:block;margin-top:6px}
+.hit{touch-action:none;cursor:grab}
+h1,legend,label,button,select,input{text-transform:uppercase}
+legend,label,button{letter-spacing:.02em}
+@media (min-width:920px){
+main{max-width:1240px}
+.lay{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(340px,.9fr);gap:20px;align-items:start}
+.sheetwrap{position:sticky;top:calc(12px + env(safe-area-inset-top,0px))}
+.sheet svg{max-height:calc(100vh - 150px)}
+}
+</style>
+</head>
+<body>
+<main>
+<h1>Lift Plan Sketch</h1>
+<div class="lay">
+<div class="sheetwrap"><div class="sheet">
+<svg id="sk" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 600 660" font-family="Arial, Helvetica, sans-serif">
+<rect width="600" height="660" fill="#ffffff"/>
+<!-- ground -->
+<line x1="10" y1="520" x2="590" y2="520" stroke="#232a36" stroke-width="3"/>
+<g stroke="#232a36" stroke-width="1.3"><line x1="26" y1="520" x2="17" y2="531"/><line x1="58" y1="520" x2="49" y2="531"/><line x1="90" y1="520" x2="81" y2="531"/><line x1="122" y1="520" x2="113" y2="531"/><line x1="154" y1="520" x2="145" y2="531"/><line x1="186" y1="520" x2="177" y2="531"/><line x1="218" y1="520" x2="209" y2="531"/><line x1="250" y1="520" x2="241" y2="531"/><line x1="282" y1="520" x2="273" y2="531"/><line x1="314" y1="520" x2="305" y2="531"/><line x1="520" y1="520" x2="511" y2="531"/><line x1="552" y1="520" x2="543" y2="531"/><line x1="584" y1="520" x2="575" y2="531"/></g>
+<text x="14" y="514" font-size="11" fill="#5b6678">GL</text>
+<!-- crane -->
+<g stroke="#232a36" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round">
+<rect x="45" y="478" width="14" height="22" fill="#9aa6ba"/>
+<rect x="45" y="479" width="14" height="6" fill="#fff"/>
+<path d="M46 479 l4 6 M51 479 l4 6 M55 479 l3 6" stroke="#d9480f" stroke-width="2.2"/>
+<rect x="49.5" y="500" width="5" height="14" fill="#c9ced6"/>
+<rect x="40" y="514" width="24" height="6" rx="1" fill="#474e5a"/>
+<rect x="205" y="478" width="14" height="22" fill="#9aa6ba"/>
+<rect x="205" y="479" width="14" height="6" fill="#fff"/>
+<path d="M206 479 l4 6 M211 479 l4 6 M215 479 l3 6" stroke="#d9480f" stroke-width="2.2"/>
+<rect x="209.5" y="500" width="5" height="14" fill="#c9ced6"/>
+<rect x="200" y="514" width="24" height="6" rx="1" fill="#474e5a"/>
+<path d="M40 480 l6 -6 h190 v22 h-196 z" fill="#f1e08c"/>
+<line x1="46" y1="485" x2="234" y2="485" stroke-width="1"/>
+<rect x="40" y="481" width="3" height="6" fill="#d9480f" stroke-width="0.8"/>
+<rect x="118" y="481" width="16" height="12" fill="#d8c466" stroke-width="1.1"/>
+<path d="M190 478 v18 M198 478 v18 M190 483 h8 M190 489 h8" stroke-width="1.1" fill="none"/>
+<rect x="226" y="460" width="4" height="16" fill="#474e5a"/>
+<path d="M236 496 V458 q0 -5 5 -5 h18 q4 0 6 4 l7 17 v22 z" fill="#f1e08c"/>
+<path d="M242 459 h16 l6 14 h-22 z" fill="#cfe3f1" stroke-width="1.2"/>
+<path d="M250 474 v20 M242 480 h6" stroke-width="1.1" fill="none"/>
+<rect x="268" y="488" width="8" height="8" rx="1" fill="#474e5a"/>
+<rect x="272" y="480" width="3" height="5" fill="#f2b300" stroke-width="0.8"/>
+<path d="M266 458 l6 -4" stroke-width="1.4" fill="none"/>
+<path d="M62 498 a16 16 0 0 1 32 0" fill="#474e5a" stroke-width="1.3"/>
+<circle cx="78" cy="507" r="13" fill="#2a2f3a"/>
+<circle cx="78" cy="507" r="7.2" fill="#e3e6ea" stroke-width="1.1"/>
+<circle cx="78" cy="507" r="2.4" fill="#474e5a" stroke-width="0.8"/>
+<g fill="#232a36" stroke="none"><circle cx="82.8" cy="507.0" r="0.8"/><circle cx="80.4" cy="511.2" r="0.8"/><circle cx="75.6" cy="511.2" r="0.8"/><circle cx="73.2" cy="507.0" r="0.8"/><circle cx="75.6" cy="502.8" r="0.8"/><circle cx="80.4" cy="502.8" r="0.8"/></g>
+<path d="M90 498 a16 16 0 0 1 32 0" fill="#474e5a" stroke-width="1.3"/>
+<circle cx="106" cy="507" r="13" fill="#2a2f3a"/>
+<circle cx="106" cy="507" r="7.2" fill="#e3e6ea" stroke-width="1.1"/>
+<circle cx="106" cy="507" r="2.4" fill="#474e5a" stroke-width="0.8"/>
+<g fill="#232a36" stroke="none"><circle cx="110.8" cy="507.0" r="0.8"/><circle cx="108.4" cy="511.2" r="0.8"/><circle cx="103.6" cy="511.2" r="0.8"/><circle cx="101.2" cy="507.0" r="0.8"/><circle cx="103.6" cy="502.8" r="0.8"/><circle cx="108.4" cy="502.8" r="0.8"/></g>
+<path d="M130 498 a16 16 0 0 1 32 0" fill="#474e5a" stroke-width="1.3"/>
+<circle cx="146" cy="507" r="13" fill="#2a2f3a"/>
+<circle cx="146" cy="507" r="7.2" fill="#e3e6ea" stroke-width="1.1"/>
+<circle cx="146" cy="507" r="2.4" fill="#474e5a" stroke-width="0.8"/>
+<g fill="#232a36" stroke="none"><circle cx="150.8" cy="507.0" r="0.8"/><circle cx="148.4" cy="511.2" r="0.8"/><circle cx="143.6" cy="511.2" r="0.8"/><circle cx="141.2" cy="507.0" r="0.8"/><circle cx="143.6" cy="502.8" r="0.8"/><circle cx="148.4" cy="502.8" r="0.8"/></g>
+<path d="M158 498 a16 16 0 0 1 32 0" fill="#474e5a" stroke-width="1.3"/>
+<circle cx="174" cy="507" r="13" fill="#2a2f3a"/>
+<circle cx="174" cy="507" r="7.2" fill="#e3e6ea" stroke-width="1.1"/>
+<circle cx="174" cy="507" r="2.4" fill="#474e5a" stroke-width="0.8"/>
+<g fill="#232a36" stroke="none"><circle cx="178.8" cy="507.0" r="0.8"/><circle cx="176.4" cy="511.2" r="0.8"/><circle cx="171.6" cy="511.2" r="0.8"/><circle cx="169.2" cy="507.0" r="0.8"/><circle cx="171.6" cy="502.8" r="0.8"/><circle cx="176.4" cy="502.8" r="0.8"/></g>
+<path d="M236 498 a16 16 0 0 1 32 0" fill="#474e5a" stroke-width="1.3"/>
+<circle cx="252" cy="507" r="13" fill="#2a2f3a"/>
+<circle cx="252" cy="507" r="7.2" fill="#e3e6ea" stroke-width="1.1"/>
+<circle cx="252" cy="507" r="2.4" fill="#474e5a" stroke-width="0.8"/>
+<g fill="#232a36" stroke="none"><circle cx="256.8" cy="507.0" r="0.8"/><circle cx="254.4" cy="511.2" r="0.8"/><circle cx="249.6" cy="511.2" r="0.8"/><circle cx="247.2" cy="507.0" r="0.8"/><circle cx="249.6" cy="502.8" r="0.8"/><circle cx="254.4" cy="502.8" r="0.8"/></g>
+<rect x="44" y="440" width="28" height="10" rx="1" fill="#474e5a"/>
+<rect x="44" y="450" width="28" height="10" rx="1" fill="#474e5a"/>
+<rect x="44" y="460" width="28" height="10" rx="1" fill="#474e5a"/>
+<rect x="130" y="468" width="44" height="7" fill="#474e5a"/>
+<path d="M68 468 V446 l52 -8 h76 l8 8 v22 z" fill="#f1e08c"/>
+<path d="M126 446 v16 M131 446 v16 M136 446 v16 M141 446 v16 M146 446 v16" stroke-width="1" fill="none"/>
+<line x1="70" y1="458" x2="120" y2="458" stroke-width="1"/>
+<rect x="64" y="424" width="26" height="22" rx="2" fill="#f1e08c"/>
+<circle cx="77" cy="434" r="8" fill="#c9ced6"/><circle cx="77" cy="434" r="3" fill="#474e5a" stroke-width="0.9"/>
+<line x1="184.8" y1="376.4" x2="198.5" y2="323.0" stroke-width="7"/>
+<line x1="184.8" y1="376.4" x2="198.5" y2="323.0" stroke="#c9ced6" stroke-width="4"/>
+<line x1="166.0" y1="450.0" x2="184.8" y2="376.4" stroke-width="13" stroke-linecap="butt"/>
+<line x1="166.0" y1="450.0" x2="184.8" y2="376.4" stroke="#d8c466" stroke-width="10" stroke-linecap="butt"/>
+<circle cx="198.5" cy="323.0" r="3.5" fill="#fff"/>
+<circle cx="166" cy="450" r="4" fill="#fff"/>
+<polyline points="77,426 393.9,58.9" fill="none" stroke-width="1"/>
+<polygon points="369.3,93.3 391.8,66.3 399.2,72.5 376.7,99.5" fill="#d2d5da"/>
+<polygon points="329.4,139.4 368.4,92.6 377.6,100.2 338.6,147.0" fill="#c3c7ce"/>
+<polygon points="280.2,196.0 328.2,138.4 339.8,148.0 291.8,205.6" fill="#b4b9c1"/>
+<polygon points="225.1,259.8 279.1,195.0 292.9,206.6 238.9,271.4" fill="#a4aab3"/>
+<polygon points="91.5,417.0 223.5,258.6 240.5,272.6 108.5,431.0" fill="#f1e08c"/>
+<line x1="111.9" y1="403.4" x2="222.9" y2="270.2" stroke-width="0.9"/>
+<line x1="118.8" y1="409.2" x2="229.8" y2="276.0" stroke-width="0.9"/>
+<polygon points="220.0,260.5 224.2,255.4 243.4,271.4 239.2,276.5" fill="#474e5a"/>
+<polygon points="275.5,197.0 279.7,191.9 295.9,205.4 291.7,210.4" fill="#474e5a"/>
+<polygon points="324.7,140.3 328.9,135.3 342.7,146.8 338.5,151.8" fill="#474e5a"/>
+<polygon points="364.8,94.5 369.0,89.4 380.6,99.0 376.4,104.1" fill="#474e5a"/>
+<polygon points="126.8,373.1 130.4,368.8 148.8,384.2 145.2,388.5" fill="#d8c466" stroke-width="1"/>
+<polygon points="162.8,329.9 166.4,325.6 184.8,341.0 181.2,345.3" fill="#d8c466" stroke-width="1"/>
+<polygon points="192.8,293.9 196.4,289.6 214.8,305.0 211.2,309.3" fill="#d8c466" stroke-width="1"/>
+<polygon points="386.2,69.6 398.2,55.2 409.7,64.8 396.2,77.9" fill="#f1e08c"/>
+<circle cx="400" cy="64" r="5" fill="#c9ced6"/><circle cx="400" cy="64" r="1.6" fill="#232a36" stroke="none"/>
+<path d="M84 446 l6 -26 q10 -10 20 0 l8 20 z" fill="#f1e08c"/>
+<circle cx="100" cy="424" r="5.5" fill="#fff"/><circle cx="100" cy="424" r="2" fill="#232a36" stroke="none"/>
+<path d="M172 468 V436 q0 -5 5 -5 h16 l13 17 v20 z" fill="#f1e08c"/>
+<path d="M177 436 h13 l10 13 h-23 z" fill="#cfe3f1" stroke-width="1.2"/>
+<path d="M188 450 v17 M177 456 h7" stroke-width="1.1" fill="none"/>
+</g>
+<!-- boom angle -->
+<line x1="100" y1="424" x2="232" y2="424" stroke="#232a36" stroke-width="1.3" stroke-dasharray="5 4"/>
+<path d="M204 424 A104 104 0 0 0 166.6 344.1" fill="none" stroke="#232a36" stroke-width="1.6"/>
+<text id="t-angle" x="202" y="370" font-size="15" font-weight="700" fill="#14213d">—</text>
+<!-- boom length -->
+<g stroke="#232a36" stroke-width="1.2" fill="none"><line x1="89.2" y1="415.0" x2="64.7" y2="394.6" stroke-dasharray="4 3"/><line x1="392.3" y1="57.6" x2="364.7" y2="34.6" stroke-dasharray="4 3"/><line x1="69.3" y1="398.4" x2="369.3" y2="38.4"/></g>
+<polygon points="369.3,38.4 358.1,44.7 365.0,50.5" fill="#232a36"/>
+<polygon points="69.3,398.4 80.4,392.1 73.5,386.3" fill="#232a36"/>
+<text id="t-boom" x="219.3" y="218.4" font-size="15" font-weight="700" fill="#14213d" text-anchor="middle" transform="rotate(-50.19 219.3 218.4) translate(0 -7)">—</text>
+<!-- hook -->
+<g stroke="#232a36" stroke-width="1.6" fill="none"><line x1="398.5" y1="68" x2="398.5" y2="262" stroke-width="1.1"/><line x1="401.5" y1="68" x2="401.5" y2="262" stroke-width="1.1"/>
+<path d="M391 262 h18 l2 6 v12 l-4 5 h-14 l-4 -5 v-12 z" fill="#f1e08c"/><circle cx="400" cy="271" r="4.5" fill="#c9ced6"/><path d="M389 276 h22" stroke-width="1.1"/>
+<path d="M400 285 v6 a7 7 0 1 1 -7 7" stroke-width="3" stroke-linecap="round"/></g>
+<!-- load -->
+<g id="mesh" class="hit"><g stroke="#232a36" stroke-width="1.2"><g fill="#cfd5de"><rect x="299.5" y="392" width="9" height="124"/><rect x="327.9" y="392" width="7" height="124"/><rect x="355.4" y="392" width="7" height="124"/><rect x="382.8" y="392" width="7" height="124"/><rect x="410.2" y="392" width="7" height="124"/><rect x="437.6" y="392" width="7" height="124"/><rect x="465.1" y="392" width="7" height="124"/><rect x="491.5" y="392" width="9" height="124"/></g><g fill="#eef0f2"><rect x="298" y="396.5" width="204" height="7"/><rect x="298" y="426.5" width="204" height="7"/><rect x="298" y="456.5" width="204" height="7"/><rect x="298" y="486.5" width="204" height="7"/><rect x="298" y="510.5" width="204" height="7"/></g><g fill="#dfe9f3"><rect x="297" y="385" width="14" height="8"/><rect x="393" y="385" width="14" height="8"/><rect x="489" y="385" width="14" height="8"/></g></g>
+<g fill="#fff" stroke="#7b3fa0" stroke-width="2.5"><circle cx="305" cy="503" r="6"/><circle cx="495" cy="503" r="6"/></g><g stroke="#7b3fa0" stroke-width="3"><line x1="300" y1="511" x2="310" y2="511"/><line x1="490" y1="511" x2="500" y2="511"/></g></g>
+<image id="img" class="hit" x="298" y="384" width="204" height="136" preserveAspectRatio="xMidYMax meet" visibility="hidden"/>
+<g id="sl"></g>
+<text id="t-slingang" x="400" y="338" font-size="15" font-weight="700" fill="#d9480f" text-anchor="middle">—</text>
+<g id="slen"></g>
+<!-- radius -->
+<g stroke="#232a36" stroke-width="1.3" fill="none"><line x1="152" y1="520" x2="152" y2="556" stroke-dasharray="5 4"/><line x1="400" y1="520" x2="400" y2="556" stroke-dasharray="5 4"/><line x1="152" y1="550" x2="400" y2="550"/></g>
+<path d="M152 550 l11 -4.5 v9 z M400 550 l-11 -4.5 v9 z" fill="#232a36"/>
+<text id="t-radius" x="276" y="544" font-size="15" font-weight="700" fill="#14213d" text-anchor="middle">—</text>
+<text id="t-ltype" x="588" y="547" font-size="15" font-weight="700" fill="#14213d" text-anchor="end">—</text>
+<text id="t-ldim" x="588" y="570" font-size="15" font-weight="700" fill="#14213d" text-anchor="end">—</text>
+<!-- tip height -->
+<g stroke="#232a36" stroke-width="1.3" fill="none"><line x1="408" y1="64" x2="576" y2="64" stroke-dasharray="5 4"/><line x1="566" y1="64" x2="566" y2="520"/></g>
+<path d="M566 64 l-4.5 11 h9 z M566 520 l-4.5 -11 h9 z" fill="#232a36"/>
+<text id="t-height" x="556" y="292" font-size="15" font-weight="700" fill="#14213d" text-anchor="middle" transform="rotate(-90 556 292)">—</text>
+<g id="co"></g>
+<rect x="6" y="6" width="588" height="648" fill="none" stroke="#14213d" stroke-width="2.5"/>
+<rect x="6" y="580" width="588" height="74" fill="#fff" stroke="#14213d" stroke-width="2"/>
+<g stroke="#14213d" stroke-width="1.2"><line x1="6" y1="617" x2="594" y2="617"/><line x1="306" y1="580" x2="306" y2="654"/><line x1="450" y1="580" x2="450" y2="654"/></g>
+<g font-size="10" fill="#5b6678"><text x="12" y="592">PROJECT</text><text x="312" y="592">PMA NO.</text><text x="456" y="592">DATE</text><text x="12" y="629">TITLE</text><text x="312" y="629">PREPARED BY</text><text x="456" y="629">REV / SCALE</text></g>
+<g font-size="15" font-weight="700" fill="#14213d"><text id="tb-project" x="12" y="610">—</text><text id="tb-dwg" x="312" y="610">—</text><text id="tb-date" x="456" y="610"></text><text x="12" y="647">CRANE LIFT PLAN – ELEVATION VIEW</text><text id="tb-by" x="312" y="647">—</text><text x="456" y="647">REV 0 · NTS</text></g>
+</svg>
+</div></div>
+
+<div class="form">
+<fieldset>
+<legend>Drawing Info</legend>
+<div class="grid">
+<label class="full">Project<input id="proj" type="text" autocomplete="off"></label>
+<label>PMA No.<input id="dwg" type="text" autocomplete="off"></label>
+<label>Prepared By<input id="by" type="text" autocomplete="off"></label>
+</div>
+</fieldset>
+
+<fieldset>
+<legend>Crane</legend>
+<div class="grid">
+<label>Working Radius (m)<input id="radius" type="text" inputmode="decimal" autocomplete="off"></label>
+<label>Boom Tip Height (m)<input id="height" type="text" inputmode="decimal" autocomplete="off"></label>
+<label>Boom Angle (°)<input id="angle" type="text" inputmode="decimal" autocomplete="off"></label>
+<label>Boom Length (m)<input id="boom" type="text" inputmode="decimal" autocomplete="off"></label>
+</div>
+</fieldset>
+
+<fieldset>
+<legend>Load</legend>
+<div class="grid">
+<label class="full drop" id="drop">Load Picture: choose a file, drag it here, or paste it (Ctrl+V)
+<input id="photo" type="file" accept="image/*"></label>
+<p class="status full" id="phstat" role="status">No picture yet. The default mesh sketch is shown.</p>
+<label class="full">Picture Style<select id="lstyle">
+<option value="ink">Line Drawing (Scan, Screenshot, Drawing)</option>
+<option value="edge">Outline Sketch (Photo Of The Real Load)</option>
+<option value="photo">Original Picture</option>
+</select></label>
+<label>Line Detail<input id="detail" type="range" min="10" max="100" value="55"></label>
+<label>Load Size On Sketch<input id="lsize" type="range" min="55" max="115" value="100"></label>
+<button id="usemesh" class="ghost full" type="button">Use Default Mesh Sketch</button>
+<label class="full">Type Of Load<input id="ltype" type="text" autocomplete="off" placeholder="e.g. Steel beam"></label>
+<label>Length (m)<input id="ll" type="text" inputmode="decimal" autocomplete="off"></label>
+<label>Width (m)<input id="lw" type="text" inputmode="decimal" autocomplete="off"></label>
+<label class="full">Height (m)<input id="lh" type="text" inputmode="decimal" autocomplete="off"></label>
+</div>
+<div class="row" style="margin-top:10px"><button id="addpt" type="button">Add Sling Point</button><button id="rmpt" type="button">Remove Sling Point</button></div>
+<small>On the sketch you can drag the load to reposition it, drag the purple shackles to mark where the slings are attached, and drag the sling angle, boom angle and load labels.</small>
+</fieldset>
+
+<fieldset>
+<legend>Lifting Gear</legend>
+<div id="gear"></div>
+<button id="addgear" class="ghost" type="button">Add Gear</button>
+<small>Each item appears on the sketch as an arrow. Drag the label or the arrow tip to position it.</small>
+<div class="grid" style="margin-top:12px">
+<label>Webbing Sling Angle (°)<input id="slingang" type="text" inputmode="decimal" autocomplete="off"></label>
+<label>Webbing Sling Length (m)<input id="slinglen" type="text" inputmode="decimal" autocomplete="off"></label>
+</div>
+</fieldset>
+</div>
+</div>
+</main>
+
+<div class="bar"><button id="export" type="button">Export As PNG</button></div>
+
+<dialog id="dlg">
+<img id="out" alt="Exported lift plan sketch">
+<p id="hint"></p>
+<div class="row"><button id="save" class="pri" type="button">Save PNG</button><button id="share" type="button" hidden>Share</button><button id="close" type="button">Close</button></div>
+</dialog>
+
+<script>
+(function(){
+var $=function(i){return document.getElementById(i)};
+var D="—",NS="http://www.w3.org/2000/svg",XL="http://www.w3.org/1999/xlink",HX=400,HY=300,GY=520;
+function v(id){return $(id).value.trim()}
+function u(id,unit){var x=v(id);return x?x+(unit?" "+unit:""):D}
+function set(id,t){$(id).textContent=String(t).toUpperCase()}
+function cut(t,n){return t.length>n?t.slice(0,n-1)+"…":t}
+function tc(s){return s.toUpperCase()}
+function cl(v,a,b){return Math.max(a,Math.min(b,v))}
+function ns(t,a){var e=document.createElementNS(NS,t);for(var k in a)e.setAttribute(k,a[k]);return e}
+function svgPt(e){var s=$("sk"),p=s.createSVGPoint();p.x=e.clientX;p.y=e.clientY;return p.matrixTransform(s.getScreenCTM().inverse())}
+function drag(el,start,move){
+var on=0,ox=0,oy=0;
+el.addEventListener("pointerdown",function(e){try{el.setPointerCapture(e.pointerId)}catch(x){}on=1;var q=svgPt(e),o=start();ox=q.x-o[0];oy=q.y-o[1];e.preventDefault()});
+el.addEventListener("pointermove",function(e){if(!on)return;var q=svgPt(e);move(q.x-ox,q.y-oy)});
+el.addEventListener("pointerup",function(){on=0});
+el.addEventListener("pointercancel",function(){on=0});
+}
+
+/* gear rows */
+function row(){
+var g=document.createElement("div");g.className="g";var n=$("gear").children.length;g._lx=24;g._ly=30+n*50;g._tx=350+n*34;g._ty=350;
+g.innerHTML='<input class="gt" type="text" placeholder="Type, e.g. Webbing sling" aria-label="Gear type"><input class="gq" type="text" inputmode="numeric" placeholder="Qty" aria-label="Quantity"><input class="gd wide" type="text" placeholder="Details, e.g. 2 t, 4 m" aria-label="Details"><button class="ghost wide" type="button">Remove</button>';
+g.querySelectorAll("input").forEach(function(e){e.addEventListener("input",update)});
+g.querySelector("button").addEventListener("click",function(){if($("gear").children.length>1){g.remove();update()}else{g.querySelectorAll("input").forEach(function(e){e.value=""});update()}});
+$("gear").appendChild(g);
+}
+$("addgear").addEventListener("click",function(){row();update();$("gear").lastChild.querySelector(".gt").focus()});
+row();
+
+function update(){
+var a=v("angle"),d=[v("ll"),v("lw"),v("lh")],dim=d.some(Boolean)?d.map(function(x){return x||D}).join(" × "):D;
+set("t-angle","Boom Angle "+(a?a+"°":D));
+set("tb-project",cut(tc(v("proj"))||D,30));set("tb-dwg",cut(v("dwg")||D,14));set("tb-by",cut(tc(v("by"))||D,14));
+set("tb-date",new Date().toLocaleDateString("en-GB",{day:"2-digit",month:"short",year:"numeric"}));
+set("t-boom","Boom length "+u("boom","m"));
+set("t-radius","Working radius "+u("radius","m"));
+set("t-height","Boom tip height "+u("height","m"));
+var sa=v("slingang"),sl=v("slinglen");
+set("t-slingang",sa?sa+"°":D);
+posLabels();
+set("t-ltype",cut("Load: "+(tc(v("ltype"))||D),20));
+set("t-ldim","L × W × H: "+dim+(d.some(Boolean)?" m":""));
+drawCo();fitLabels();
+}
+document.querySelectorAll("main input[type=text]").forEach(function(e){e.addEventListener("input",update)});
+
+/* draggable labels */
+var LBL=["t-angle","t-slingang","t-ltype","t-ldim"];
+function dragLabel(id){
+var t=$(id),r=ns("rect",{fill:"transparent","class":"hit"});
+t.parentNode.insertBefore(r,t);t.setAttribute("pointer-events","none");
+t._fit=function(){try{var b=t.getBBox();r.setAttribute("x",b.x-7);r.setAttribute("y",b.y-7);r.setAttribute("width",b.width+14);r.setAttribute("height",b.height+14)}catch(e){}};
+drag(r,function(){return[+t.getAttribute("x"),+t.getAttribute("y")]},function(x,y){t._moved=1;t.setAttribute("x",cl(x,12,588));t.setAttribute("y",cl(y,20,574));t._fit()});
+}
+function fitLabels(){LBL.forEach(function(id){var t=$(id);if(t._fit)t._fit()})}
+LBL.forEach(dragLabel);
+
+/* sling points with shackles */
+var pts=[{x:318,y:392},{x:482,y:392}],lo={x:0,y:0};
+function drawSl(){
+var g=$("sl");g.innerHTML="";
+pts.forEach(function(p){g.appendChild(ns("line",{x1:HX,y1:HY,x2:p.x,y2:p.y-8,stroke:"#d9480f","stroke-width":3}))});
+pts.forEach(function(p,i){
+var c=ns("g",{transform:"translate("+p.x+" "+p.y+")"});
+c.innerHTML='<path d="M-6 -6 v9 a6 6 0 0 0 12 0 v-9" fill="#fff" stroke="#7b3fa0" stroke-width="3"/><rect x="-9" y="-10" width="18" height="5" rx="2" fill="#fff" stroke="#7b3fa0" stroke-width="2.5"/>';
+g.appendChild(c);
+var h=ns("circle",{cx:p.x,cy:p.y,r:20,fill:"transparent","class":"hit"});
+drag(h,function(){return[p.x,p.y]},function(x,y){
+p.x=cl(x,140,560);p.y=cl(y,HY+12,GY);
+g.children[i].setAttribute("x2",p.x);g.children[i].setAttribute("y2",p.y-8);
+c.setAttribute("transform","translate("+p.x+" "+p.y+")");h.setAttribute("cx",p.x);h.setAttribute("cy",p.y);
+posLabels();
+});
+g.appendChild(h);
+});
+posLabels();
+}
+function posLabels(){
+var g=$("slen");if(!g)return;g.innerHTML="";
+var p=pts[0],ax=HX,ay=HY,bx=p.x,by=p.y-8,dx=bx-ax,dy=by-ay,len=Math.sqrt(dx*dx+dy*dy);
+if(len<24)return;
+var ux=dx/len,uy=dy/len,nx=uy,ny=-ux;
+if(ny>0.01||(Math.abs(ny)<=0.01&&nx>0)){nx=-nx;ny=-ny}
+var o=14,x1=ax+nx*o,y1=ay+ny*o,x2=bx+nx*o,y2=by+ny*o,C="#d9480f";
+function head(x,y,cx,cy){return ns("polygon",{points:x+","+y+" "+(x-9*cx+3.5*cy)+","+(y-9*cy-3.5*cx)+" "+(x-9*cx-3.5*cy)+","+(y-9*cy+3.5*cx),fill:C})}
+g.appendChild(ns("line",{x1:ax+nx*3,y1:ay+ny*3,x2:ax+nx*(o+4),y2:ay+ny*(o+4),stroke:C,"stroke-width":1}));
+g.appendChild(ns("line",{x1:bx+nx*3,y1:by+ny*3,x2:bx+nx*(o+4),y2:by+ny*(o+4),stroke:C,"stroke-width":1}));
+g.appendChild(ns("line",{x1:x1,y1:y1,x2:x2,y2:y2,stroke:C,"stroke-width":1.5}));
+g.appendChild(head(x2,y2,ux,uy));g.appendChild(head(x1,y1,-ux,-uy));
+var sl=$("slinglen").value.trim(),fs=cl(len*0.15,9,18),a=Math.atan2(dy,dx)*180/Math.PI;
+if(a>90||a<-90)a+=180;
+var mx=(x1+x2)/2+nx*5,my=(y1+y2)/2+ny*5;
+var tx=ns("text",{x:mx,y:my,"font-size":fs.toFixed(1),"font-weight":700,fill:C,"text-anchor":"middle",transform:"rotate("+a.toFixed(1)+" "+mx.toFixed(1)+" "+my.toFixed(1)+")"});
+tx.textContent=sl?(sl+" M").toUpperCase():"—";g.appendChild(tx);
+}
+$("addpt").addEventListener("click",function(){if(pts.length<6){pts.push({x:400+lo.x,y:392+lo.y});drawSl()}});
+$("rmpt").addEventListener("click",function(){if(pts.length>1){pts.pop();drawSl()}});
+
+/* gear callouts */
+var co=$("co");
+function gearLines(row){
+var t=row.querySelector(".gt").value.trim(),q=row.querySelector(".gq").value.trim(),x=row.querySelector(".gd").value.trim();
+if(!(t||q||x))return null;
+var a=cut(tc(t||"Gear")+(q?" × "+q:""),28);
+return x?[a,cut(tc(x),30)]:[a];
+}
+function drawCo(){
+co.innerHTML="";
+[].slice.call($("gear").children).forEach(function(row){
+var L=gearLines(row);if(!L)return;
+var w=Math.max.apply(null,L.map(function(s){return s.length}))*9.7+16,h=L.length*19+8;
+var g=ns("g",{}),line=ns("line",{stroke:"#14213d","stroke-width":2}),head=ns("polygon",{fill:"#14213d"});
+var box=ns("rect",{width:w,height:h,fill:"#fff",stroke:"#14213d","stroke-width":1.8,"class":"hit"});
+var tip=ns("circle",{r:20,fill:"transparent","class":"hit"});
+var tx=L.map(function(s,i){var t=ns("text",{"font-size":15,"font-weight":700,fill:"#14213d","pointer-events":"none"});t.textContent=s;return t});
+g.appendChild(line);g.appendChild(head);g.appendChild(box);tx.forEach(function(t){g.appendChild(t)});g.appendChild(tip);co.appendChild(g);
+function place(){
+var lx=row._lx,ly=row._ly,ex=row._tx,ey=row._ty;
+box.setAttribute("x",lx);box.setAttribute("y",ly);
+tx.forEach(function(t,i){t.setAttribute("x",lx+8);t.setAttribute("y",ly+19+i*19)});
+var sx=cl(ex,lx,lx+w),sy=cl(ey,ly,ly+h);
+line.setAttribute("x1",sx);line.setAttribute("y1",sy);line.setAttribute("x2",ex);line.setAttribute("y2",ey);
+var an=Math.atan2(ey-sy,ex-sx),c=Math.cos(an),s=Math.sin(an);
+head.setAttribute("points",ex+","+ey+" "+(ex-13*c+5*s)+","+(ey-13*s-5*c)+" "+(ex-13*c-5*s)+","+(ey-13*s+5*c));
+tip.setAttribute("cx",ex);tip.setAttribute("cy",ey);
+}
+place();
+drag(box,function(){return[row._lx,row._ly]},function(x,y){row._lx=cl(x,10,590-w);row._ly=cl(y,10,576-h);place()});
+drag(tip,function(){return[row._tx,row._ty]},function(x,y){row._tx=cl(x,10,590);row._ty=cl(y,10,576);place()});
+});
+}
+
+/* load picture -> sketch */
+var photo=null,img=$("img"),stat=$("phstat");
+function say(t,err){stat.textContent=t;stat.className="status full"+(err?" err":"")}
+function lum(d,i){return .299*d[i]+.587*d[i+1]+.114*d[i+2]}
+function guessStyle(im){
+var c=document.createElement("canvas");c.width=c.height=64;var x=c.getContext("2d");
+x.fillStyle="#fff";x.fillRect(0,0,64,64);x.drawImage(im,0,0,64,64);
+var d=x.getImageData(0,0,64,64).data,light=0,i;
+for(i=0;i<d.length;i+=4)if(lum(d,i)>205)light++;
+return light/4096>0.5?"ink":"edge";
+}
+function sizeLoad(){
+var s=Number($("lsize").value)/100,w=204*s,h=136*s;
+img.setAttribute("x",HX+lo.x-w/2);img.setAttribute("y",GY+lo.y-h);img.setAttribute("width",w);img.setAttribute("height",h);
+$("mesh").setAttribute("transform","translate("+(HX+lo.x)+" "+(GY+lo.y)+") scale("+s+") translate("+(-HX)+" "+(-GY)+")");
+}
+function showImg(url){
+img.setAttribute("href",url);img.setAttributeNS(XL,"xlink:href",url);
+img.setAttribute("visibility","visible");$("mesh").setAttribute("visibility","hidden");
+}
+function sketch(){
+if(!photo)return;
+var mode=$("lstyle").value,sc=Math.min(1,640/Math.max(photo.naturalWidth,photo.naturalHeight));
+var w=Math.max(8,Math.round(photo.naturalWidth*sc)),h=Math.max(8,Math.round(photo.naturalHeight*sc));
+var c=document.createElement("canvas");c.width=w;c.height=h;
+var x=c.getContext("2d");x.fillStyle="#fff";x.fillRect(0,0,w,h);x.drawImage(photo,0,0,w,h);
+if(mode==="photo"){showImg(c.toDataURL("image/jpeg",.9));return}
+var im=x.getImageData(0,0,w,h),dt=im.data,gr=new Float32Array(w*h),i,j,k,a,det=Number($("detail").value);
+for(i=0;i<w*h;i++)gr[i]=lum(dt,i*4);
+var al=new Uint8ClampedArray(w*h);
+if(mode==="ink"){
+var thr=70+det*1.6;
+for(i=0;i<w*h;i++)al[i]=cl((thr-gr[i])/45,0,1)*255;
+}else{
+var bl=new Float32Array(w*h),t2=420-det*3.7;
+for(j=1;j<h-1;j++)for(i=1;i<w-1;i++){k=j*w+i;bl[k]=(gr[k]*4+(gr[k-1]+gr[k+1]+gr[k-w]+gr[k+w])*2+gr[k-w-1]+gr[k-w+1]+gr[k+w-1]+gr[k+w+1])/16}
+for(j=2;j<h-2;j++)for(i=2;i<w-2;i++){k=j*w+i;
+var gx=-bl[k-w-1]+bl[k-w+1]-2*bl[k-1]+2*bl[k+1]-bl[k+w-1]+bl[k+w+1],gy=-bl[k-w-1]-2*bl[k-w]-bl[k-w+1]+bl[k+w-1]+2*bl[k+w]+bl[k+w+1];
+al[k]=cl((Math.abs(gx)+Math.abs(gy)-t2)/(t2*.6),0,1)*255}
+}
+var x0=w,y0=h,x1=-1,y1=-1;
+for(j=0;j<h;j++)for(i=0;i<w;i++){k=j*w+i;a=al[k];dt[k*4]=20;dt[k*4+1]=33;dt[k*4+2]=61;dt[k*4+3]=a;
+if(a>60){if(i<x0)x0=i;if(i>x1)x1=i;if(j<y0)y0=j;if(j>y1)y1=j}}
+if(x1<0){say("No lines found in this picture. Move the Line detail slider or pick another style.",1);return}
+x.putImageData(im,0,0);
+var cw=x1-x0+1,ch=y1-y0+1,o=document.createElement("canvas");o.width=cw;o.height=ch;
+o.getContext("2d").drawImage(c,x0,y0,cw,ch,0,0,cw,ch);
+showImg(o.toDataURL("image/png"));
+}
+function loadFile(f){
+if(!f)return;
+if(f.type&&f.type.indexOf("image/")!==0){say("That file is not a picture. Choose a JPG or PNG.",1);return}
+say("Reading picture…");
+var fr=new FileReader();
+fr.onerror=function(){say("Could not read that file. Try a JPG or PNG.",1)};
+fr.onload=function(){
+var im=new Image();
+im.onerror=function(){say("This picture format is not supported here. Save it as JPG or PNG and try again.",1)};
+im.onload=function(){photo=im;$("lstyle").value=guessStyle(im);say("Picture added"+(f.name?": "+f.name:"")+". Change the style, detail or size to suit the load.");sketch()};
+im.src=fr.result;
+};
+fr.readAsDataURL(f);
+}
+$("photo").addEventListener("change",function(e){loadFile(e.target.files[0])});
+document.addEventListener("dragover",function(e){e.preventDefault();$("drop").classList.add("over")});
+document.addEventListener("dragleave",function(){$("drop").classList.remove("over")});
+document.addEventListener("drop",function(e){e.preventDefault();$("drop").classList.remove("over");var f=e.dataTransfer&&e.dataTransfer.files;if(f&&f[0])loadFile(f[0])});
+document.addEventListener("paste",function(e){var f=e.clipboardData&&e.clipboardData.files;if(f&&f[0]){e.preventDefault();loadFile(f[0])}});
+$("lstyle").addEventListener("change",sketch);
+$("detail").addEventListener("input",sketch);
+$("lsize").addEventListener("input",sizeLoad);
+$("usemesh").addEventListener("click",function(){photo=null;$("photo").value="";img.setAttribute("visibility","hidden");$("mesh").setAttribute("visibility","visible");say("Default mesh sketch is shown.")});
+
+[img,$("mesh")].forEach(function(el){
+drag(el,function(){return[lo.x,lo.y]},function(x,y){
+var nx=cl(x,-110,80),ny=cl(y,-200,0),dx=nx-lo.x,dy=ny-lo.y;lo.x=nx;lo.y=ny;
+pts.forEach(function(p){p.x+=dx;p.y=Math.max(HY+12,p.y+dy)});
+sizeLoad();drawSl();
+});
+});
+sizeLoad();drawSl();update();
+
+/* export */
+var blobRef=null,dl=null;
+if(window.claude&&window.claude.use){window.claude.use("downloads").then(function(d){dl=d}).catch(function(){})}
+function render(cb){
+var xml=new XMLSerializer().serializeToString($("sk")),im=new Image();
+im.onload=function(){
+var c=document.createElement("canvas");c.width=1500;c.height=1650;
+var x=c.getContext("2d");x.fillStyle="#fff";x.fillRect(0,0,1500,1650);x.drawImage(im,0,0,1500,1650);
+c.toBlob(function(b){cb(b,c.toDataURL("image/png"))},"image/png");
+};
+im.src="data:image/svg+xml;charset=utf-8,"+encodeURIComponent(xml);
+}
+$("export").addEventListener("click",function(){
+render(function(b,url){
+blobRef=b;$("out").src=url;
+var f=new File([b],fname(),{type:"image/png"});
+$("share").hidden=!(navigator.canShare&&navigator.canShare({files:[f]}));
+$("hint").textContent="Choose Save PNG to download the drawing, or Share to send it.";
+$("dlg").showModal();
+});
+});
+function fname(){var p=($("dwg").value.trim()||"lift-plan").replace(/[^A-Za-z0-9_-]+/g,"-");return p.toUpperCase()+"-SKETCH.png"}
+$("share").addEventListener("click",function(){
+if(!blobRef)return;
+var f=new File([blobRef],fname(),{type:"image/png"});
+navigator.share({files:[f],title:"Lift Plan Sketch"}).catch(function(e){if(e&&e.name!=="AbortError")$("hint").textContent="Sharing did not work. Use Save PNG instead."});
+});
+$("save").addEventListener("click",function(){
+if(!blobRef)return;
+if(!dl){var a=document.createElement("a"),url=URL.createObjectURL(blobRef);a.href=url;a.download=fname();document.body.appendChild(a);a.click();a.remove();setTimeout(function(){URL.revokeObjectURL(url)},4000);$("hint").textContent="Downloaded. Check your Downloads folder.";return}
+dl.save({filename:fname(),data:blobRef}).then(function(){$("hint").textContent="Saved."}).catch(function(e){
+if(e&&e.code==="declined")return;
+$("hint").textContent="Could not save. Right-click the image and choose Save image.";
+});
+});
+$("close").addEventListener("click",function(){$("dlg").close()});
+})();
+</script>
+
+</body>
+</html>
