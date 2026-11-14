@@ -5,8 +5,18 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="description" content="Sketch a mobile crane lift plan in elevation view and export it as PNG.">
 <link rel="icon" href="icon-192.png">
-<link rel="apple-touch-icon" href="icon-192.png">
-<link rel="manifest" href="manifest.webmanifest">
+<script>
+(function(){
+var MAX=2,KEY="haqls.demo.opens",SK="haqls.demo.session",n=0,ok=1;
+function ck(){var m=document.cookie.match(/(?:^|; )haqls_demo=(\d+)/);return m?+m[1]:0}
+try{
+n=Math.max(+(localStorage.getItem(KEY)||0),ck());
+if(!sessionStorage.getItem(SK)){n+=1;sessionStorage.setItem(SK,"1");localStorage.setItem(KEY,String(n));document.cookie="haqls_demo="+n+"; max-age=31536000; path=/; SameSite=Lax"}
+}catch(e){ok=0}
+var standalone=false;try{standalone=matchMedia("(display-mode: standalone)").matches||navigator.standalone===true}catch(e){}
+window.__demo={opens:n,max:MAX,blocked:standalone||(ok&&n>MAX),standalone:standalone,counted:ok};
+})();
+</script>
 <style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font-size:14px}img{max-width:100%}[hidden]{display:none!important}</style>
 <title>Lift Plan Sketch</title>
 <meta name="theme-color" content="#f2b300">
@@ -66,6 +76,11 @@ dialog form{display:flex;flex-direction:column;gap:10px}
 .srow button.pri{background:var(--accent);color:var(--accent-ink);border:0}
 .srow button.del{color:var(--warn)}
 .hit{touch-action:none;cursor:grab}
+.demo{background:var(--ink);color:var(--surface);border-radius:6px;padding:8px 12px;margin:0 0 12px;font-size:.85rem;font-weight:700;letter-spacing:.03em;text-transform:uppercase}
+.wall{min-height:70vh;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;gap:14px;padding-block:40px}
+.wall img{width:96px;height:96px;border-radius:22px}
+.wall h1{font-size:1.5rem;margin:0}
+.wall p{margin:0;max-width:34ch;color:var(--muted);line-height:1.5}
 #sk{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
 #sk image{-webkit-user-drag:none}
 h1,h2,legend,label,button,select,input,.fname,.srow b{text-transform:uppercase}
@@ -81,6 +96,7 @@ main{max-width:1240px}
 <body>
 <main>
 <h1>Lift Plan Sketch</h1>
+<p class="demo" id="demobar" hidden></p>
 <div class="files">
 <p class="fname">Sketch: <b id="curname">Untitled</b><span id="savestat" role="status"></span></p>
 <div class="row"><button id="newbtn" type="button">New Sketch</button><button id="savebtn" class="pri" type="button">Save</button><button id="openbtn" type="button">Saved Sketches</button></div>
@@ -302,6 +318,17 @@ main{max-width:1240px}
 
 <script>
 (function(){
+var d=window.__demo||{};
+if(d.blocked){
+document.querySelector("main").innerHTML='<div class="wall"><img src="icon-192.png" alt=""><h1>DEMO LIMIT REACHED</h1><p id="wallmsg"></p></div>';
+document.getElementById("wallmsg").textContent=d.standalone?"This demo cannot be used as an installed app. Open the link in your browser instead.":"This demo of Lift Plan Sketch can be opened "+d.max+" times on each device, and you have used them all. Contact the owner for the full version.";
+var bar=document.querySelector(".bar");if(bar)bar.remove();
+return;
+}
+if(d.counted){var b=document.getElementById("demobar");b.textContent="DEMO VERSION · OPEN "+Math.min(d.opens,d.max)+" OF "+d.max+(d.opens>=d.max?" · LAST USE ON THIS DEVICE":"");b.hidden=false}
+})();
+(function(){
+if(window.__demo&&window.__demo.blocked)return;
 var $=function(i){return document.getElementById(i)};
 var D="—",NS="http://www.w3.org/2000/svg",XL="http://www.w3.org/1999/xlink",HX=400,HY=300,GY=520;
 function v(id){return $(id).value.trim()}
