@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="description" content="Sketch a mobile crane lift plan in elevation view and export it as PNG.">
+<meta name="description" content="Sketch a mobile or crawler crane lift plan in elevation view and export it as PNG.">
 <link rel="icon" href="icon-192.png">
 <script>
 (function(){
@@ -76,6 +76,10 @@ dialog form{display:flex;flex-direction:column;gap:10px}
 .srow button.pri{background:var(--accent);color:var(--accent-ink);border:0}
 .srow button.del{color:var(--warn)}
 .hit{touch-action:none;cursor:grab}
+.seg{display:flex;grid-column:1/-1}
+.seg button{flex:1 1 0;max-width:none;margin:0;background:var(--bg);color:var(--ink);border:1px solid var(--line);border-radius:0;min-height:44px;padding:0 8px}
+.seg button:first-child{border-radius:6px 0 0 6px}.seg button:last-child{border-radius:0 6px 6px 0;border-left:0}
+.seg button[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
 .demo{background:var(--ink);color:var(--surface);border-radius:6px;padding:8px 12px;margin:0 0 12px;font-size:.85rem;font-weight:700;letter-spacing:.03em;text-transform:uppercase}
 .wall{min-height:70vh;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;gap:14px;padding-block:40px}
 .wall img{width:96px;height:96px;border-radius:22px}
@@ -111,6 +115,7 @@ main{max-width:1240px}
 <text x="14" y="514" font-size="11" fill="#5b6678">GL</text>
 <!-- crane -->
 <g stroke="#232a36" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round">
+<g id="cr-mob-base">
 <rect x="45" y="478" width="14" height="22" fill="#9aa6ba"/>
 <rect x="45" y="479" width="14" height="6" fill="#fff"/>
 <path d="M46 479 l4 6 M51 479 l4 6 M55 479 l3 6" stroke="#d9480f" stroke-width="2.2"/>
@@ -158,6 +163,17 @@ main{max-width:1240px}
 <circle cx="252" cy="507" r="7.2" fill="#e3e6ea" stroke-width="1.1"/>
 <circle cx="252" cy="507" r="2.4" fill="#474e5a" stroke-width="0.8"/>
 <g fill="#232a36" stroke="none"><circle cx="256.8" cy="507.0" r="0.8"/><circle cx="254.4" cy="511.2" r="0.8"/><circle cx="249.6" cy="511.2" r="0.8"/><circle cx="247.2" cy="507.0" r="0.8"/><circle cx="249.6" cy="502.8" r="0.8"/><circle cx="254.4" cy="502.8" r="0.8"/></g>
+</g>
+<g id="cr-crw-base" display="none">
+<rect x="122" y="474" width="60" height="14" fill="#474e5a"/>
+<rect x="64" y="484" width="176" height="36" rx="18" fill="#2a2f3a"/>
+<path d="M82 484 v4 M82 516 v4 M90 484 v4 M90 516 v4 M98 484 v4 M98 516 v4 M106 484 v4 M106 516 v4 M114 484 v4 M114 516 v4 M122 484 v4 M122 516 v4 M130 484 v4 M130 516 v4 M138 484 v4 M138 516 v4 M146 484 v4 M146 516 v4 M154 484 v4 M154 516 v4 M162 484 v4 M162 516 v4 M170 484 v4 M170 516 v4 M178 484 v4 M178 516 v4 M186 484 v4 M186 516 v4 M194 484 v4 M194 516 v4 M202 484 v4 M202 516 v4 M210 484 v4 M210 516 v4 M218 484 v4 M218 516 v4" stroke="#8a93a1" stroke-width="1.2" fill="none"/>
+<rect x="76" y="491" width="152" height="22" rx="11" fill="#f1e08c"/>
+<line x1="96" y1="496.5" x2="208" y2="496.5" stroke-width="1"/>
+<circle cx="88" cy="502" r="9" fill="#c9ced6"/><circle cx="88" cy="502" r="3" fill="#474e5a" stroke-width="0.9"/>
+<circle cx="216" cy="502" r="9" fill="#c9ced6"/><circle cx="216" cy="502" r="3" fill="#474e5a" stroke-width="0.9"/>
+<g fill="#474e5a" stroke-width="1"><circle cx="112" cy="506" r="4.5"/><circle cx="132" cy="506" r="4.5"/><circle cx="152" cy="506" r="4.5"/><circle cx="172" cy="506" r="4.5"/><circle cx="192" cy="506" r="4.5"/></g>
+</g>
 <rect x="44" y="440" width="28" height="10" rx="1" fill="#474e5a"/>
 <rect x="44" y="450" width="28" height="10" rx="1" fill="#474e5a"/>
 <rect x="44" y="460" width="28" height="10" rx="1" fill="#474e5a"/>
@@ -167,6 +183,7 @@ main{max-width:1240px}
 <line x1="70" y1="458" x2="120" y2="458" stroke-width="1"/>
 <rect x="64" y="424" width="26" height="22" rx="2" fill="#f1e08c"/>
 <circle cx="77" cy="434" r="8" fill="#c9ced6"/><circle cx="77" cy="434" r="3" fill="#474e5a" stroke-width="0.9"/>
+<g id="cr-mob-boom">
 <line x1="184.8" y1="376.4" x2="198.5" y2="323.0" stroke-width="7"/>
 <line x1="184.8" y1="376.4" x2="198.5" y2="323.0" stroke="#c9ced6" stroke-width="4"/>
 <line x1="166.0" y1="450.0" x2="184.8" y2="376.4" stroke-width="13" stroke-linecap="butt"/>
@@ -188,6 +205,8 @@ main{max-width:1240px}
 <polygon points="126.8,373.1 130.4,368.8 148.8,384.2 145.2,388.5" fill="#d8c466" stroke-width="1"/>
 <polygon points="162.8,329.9 166.4,325.6 184.8,341.0 181.2,345.3" fill="#d8c466" stroke-width="1"/>
 <polygon points="192.8,293.9 196.4,289.6 214.8,305.0 211.2,309.3" fill="#d8c466" stroke-width="1"/>
+</g>
+<g id="cr-crw-boom" display="none"></g>
 <polygon points="386.2,69.6 398.2,55.2 409.7,64.8 396.2,77.9" fill="#f1e08c"/>
 <circle cx="400" cy="64" r="5" fill="#c9ced6"/><circle cx="400" cy="64" r="1.6" fill="#232a36" stroke="none"/>
 <path d="M84 446 l6 -26 q10 -10 20 0 l8 20 z" fill="#f1e08c"/>
@@ -201,10 +220,10 @@ main{max-width:1240px}
 <path d="M204 424 A104 104 0 0 0 166.6 344.1" fill="none" stroke="#232a36" stroke-width="1.6"/>
 <text id="t-angle" x="202" y="370" font-size="15" font-weight="700" fill="#14213d">—</text>
 <!-- boom length -->
-<g stroke="#232a36" stroke-width="1.2" fill="none"><line x1="89.2" y1="415.0" x2="64.7" y2="394.6" stroke-dasharray="4 3"/><line x1="392.3" y1="57.6" x2="364.7" y2="34.6" stroke-dasharray="4 3"/><line x1="69.3" y1="398.4" x2="369.3" y2="38.4"/></g>
-<polygon points="369.3,38.4 358.1,44.7 365.0,50.5" fill="#232a36"/>
-<polygon points="69.3,398.4 80.4,392.1 73.5,386.3" fill="#232a36"/>
-<text id="t-boom" x="219.3" y="218.4" font-size="15" font-weight="700" fill="#14213d" text-anchor="middle" transform="rotate(-50.19 219.3 218.4) translate(0 -7)">—</text>
+<g stroke="#232a36" stroke-width="1.2" fill="none"><line x1="89.2" y1="415.0" x2="46.3" y2="379.2" stroke-dasharray="4 3"/><line x1="392.3" y1="57.6" x2="346.3" y2="19.2" stroke-dasharray="4 3"/><line x1="50.9" y1="383.0" x2="350.9" y2="23.0"/></g>
+<polygon points="350.9,23.0 339.7,29.3 346.6,35.1" fill="#232a36"/>
+<polygon points="50.9,383.0 62.0,376.7 55.1,370.9" fill="#232a36"/>
+<text id="t-boom" x="200.9" y="203.0" font-size="15" font-weight="700" fill="#14213d" text-anchor="middle" transform="rotate(-50.19 200.9 203.0) translate(0 -7)">—</text>
 <!-- hook -->
 <g stroke="#232a36" stroke-width="1.6" fill="none"><line x1="398.5" y1="68" x2="398.5" y2="262" stroke-width="1.1"/><line x1="401.5" y1="68" x2="401.5" y2="262" stroke-width="1.1"/>
 <path d="M391 262 h18 l2 6 v12 l-4 5 h-14 l-4 -5 v-12 z" fill="#f1e08c"/><circle cx="400" cy="271" r="4.5" fill="#c9ced6"/><path d="M389 276 h22" stroke-width="1.1"/>
@@ -248,6 +267,7 @@ main{max-width:1240px}
 <fieldset>
 <legend>Crane</legend>
 <div class="grid">
+<div class="seg" id="ctype" role="group" aria-label="Crane type"><button type="button" data-t="mobile" aria-pressed="true">Mobile Crane</button><button type="button" data-t="crawler" aria-pressed="false">Crawler Crane</button></div>
 <label>Working Radius (m)<input id="radius" type="text" inputmode="decimal" autocomplete="off"></label>
 <label>Boom Tip Height (m)<input id="height" type="text" inputmode="decimal" autocomplete="off"></label>
 <label>Boom Angle (°)<input id="angle" type="text" inputmode="decimal" autocomplete="off"></label>
@@ -350,6 +370,31 @@ el.addEventListener("touchmove",function(e){e.preventDefault()},{passive:false})
 }
 $("sk").addEventListener("dragstart",function(e){e.preventDefault()});
 
+/* crane type */
+(function(){
+var g=$("cr-crw-boom"),px=100,py=424,dx=300,dy=-360,L=Math.sqrt(dx*dx+dy*dy),ux=dx/L,uy=dy/L,nx=-uy,ny=ux,E=L-18,N=110,j,s;
+function w(s){return s<44?3+5*s/44:s>E-60?8-4*(s-E+60)/60:8}
+function pt(s,k){var h=w(s)*k;return(px+ux*s+nx*h).toFixed(1)+","+(py+uy*s+ny*h).toFixed(1)}
+var top=[],bot=[],zig=[];
+for(j=0;j<=N;j++){s=6+(E-6)*j/N;top.push(pt(s,-1));bot.push(pt(s,1))}
+for(j=0,s=6;s<=E;s+=14,j++)zig.push(pt(s,j%2?1:-1));
+g.innerHTML='<polyline points="77,426 393.9,58.9" fill="none" stroke-width="1"/>'+
+'<line x1="80" y1="368" x2="391" y2="68" stroke-width="1.2"/><line x1="82" y1="371" x2="393" y2="72" stroke-width="1.2"/>'+
+'<path d="M50 440 L80 368 L118 439" fill="none" stroke-width="4.5"/><path d="M50 440 L80 368 L118 439" fill="none" stroke="#f1e08c" stroke-width="2"/>'+
+'<circle cx="80" cy="368" r="4.5" fill="#c9ced6"/>'+
+'<polyline points="'+zig.join(" ")+'" fill="none" stroke-width="1"/>'+
+'<polyline points="'+top.join(" ")+'" fill="none" stroke-width="3.6"/><polyline points="'+bot.join(" ")+'" fill="none" stroke-width="3.6"/>'+
+'<polyline points="'+top.join(" ")+'" fill="none" stroke="#f1e08c" stroke-width="1.6"/><polyline points="'+bot.join(" ")+'" fill="none" stroke="#f1e08c" stroke-width="1.6"/>';
+})();
+var ctype="mobile";
+function setCrane(t){
+ctype=t==="crawler"?"crawler":"mobile";var m=ctype==="mobile";
+["cr-mob-base","cr-mob-boom"].forEach(function(id){$(id).setAttribute("display",m?"inline":"none")});
+["cr-crw-base","cr-crw-boom"].forEach(function(id){$(id).setAttribute("display",m?"none":"inline")});
+[].slice.call($("ctype").children).forEach(function(b){b.setAttribute("aria-pressed",String(b.dataset.t===ctype))});
+}
+[].slice.call($("ctype").children).forEach(function(b){b.addEventListener("click",function(){setCrane(b.dataset.t)})});
+
 /* gear rows */
 function row(){
 var g=document.createElement("div");g.className="g";var n=$("gear").children.length;g._lx=24;g._ly=30+n*50;g._tx=350+n*34;g._ty=350;
@@ -363,7 +408,7 @@ row();
 
 function update(){
 var a=v("angle"),d=[v("ll"),v("lw"),v("lh")],dim=d.some(Boolean)?d.map(function(x){return x||D}).join(" × "):D;
-set("t-angle","Boom Angle "+(a?a+"°":D));
+set("t-angle",a?a+"°":D);
 set("tb-project",cut(tc(v("proj"))||D,30));set("tb-dwg",cut(v("dwg")||D,14));set("tb-by",cut(tc(v("by"))||D,14));
 set("tb-date",new Date().toLocaleDateString("en-GB",{day:"2-digit",month:"short",year:"numeric"}));
 set("t-boom","Boom length "+u("boom","m"));
@@ -563,13 +608,14 @@ function getState(){
 var f={},lab={};
 FIELDS.forEach(function(k){f[k]=$(k).value});
 LBL.forEach(function(id){var t=$(id);if(t._moved)lab[id]=[+t.getAttribute("x"),+t.getAttribute("y")]});
-return{v:1,fields:f,labels:lab,photo:photoSrc||"",
+return{v:1,ctype:ctype,fields:f,labels:lab,photo:photoSrc||"",
 gear:[].slice.call($("gear").children).map(function(r){return{t:r.querySelector(".gt").value,q:r.querySelector(".gq").value,d:r.querySelector(".gd").value,p:[r._lx,r._ly,r._tx,r._ty]}}),
 pts:pts.map(function(p){return[p.x,p.y]}),lo:[lo.x,lo.y],lsize:$("lsize").value,detail:$("detail").value,lstyle:$("lstyle").value};
 }
 function setState(st){
 st=st||{};var f=st.fields||{};
 FIELDS.forEach(function(k){$(k).value=f[k]||""});
+setCrane(st.ctype);
 $("gear").innerHTML="";
 (st.gear&&st.gear.length?st.gear:[{}]).forEach(function(g){
 row();var r=$("gear").lastChild;
