@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>:root{color-scheme:light}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>Haq Lifting Sketch</title>
+<meta name="description" content="Aplikasi Android Haq Lifting Sketch: jana lukisan lifting sketch profesional terus dari telefon. RM10 sekali bayar.">
+<meta name="theme-color" content="#0d2452">
+<link rel="icon" href="icon-192.png">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=Barlow+Condensed:wght@600;700;800&display=swap">
+<style>
+/* Layout: a drawing sheet. Grid-paper hero with the real sketch beside the pitch, features as sketch callout boxes,
+   and the offer set out as the sketch's own title block. One column on phones. */
+:root{
+--bg:#f1f4f9;--paper:#ffffff;--ink:#0d2452;--muted:#4c5b7a;--line:#c3cddd;--grid:#dde4ef;
+--red:#d5102a;--blue:#0b3a8a;--yellow:#f5b800;--cta-ink:#0d2452;--sheet:#ffffff;
+--display:"Barlow Condensed","Arial Narrow","Segoe UI",sans-serif;--body:Barlow,"Segoe UI",Roboto,system-ui,sans-serif}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#081428;--paper:#0f2145;--ink:#eef2fb;--muted:#a7b5d2;--line:#2a3e69;--grid:#12254a;--red:#ff6474;--blue:#86abff;--yellow:#f5b800;--cta-ink:#0d2452;--sheet:#ffffff;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#081428;--paper:#0f2145;--ink:#eef2fb;--muted:#a7b5d2;--line:#2a3e69;--grid:#12254a;--red:#ff6474;--blue:#86abff;--yellow:#f5b800;--cta-ink:#0d2452;--sheet:#ffffff;color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font:17px/1.55 var(--body)}
+.wrap{max-width:1080px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+h1,h2,h3{font-family:var(--display);text-wrap:balance;margin:0;line-height:1.05}
+h1{font-size:clamp(2.3rem,6.4vw,4rem);font-weight:800;text-transform:uppercase;letter-spacing:.005em}
+h1 em{font-style:normal;color:var(--red)}
+h2{font-size:clamp(1.8rem,4.4vw,2.6rem);font-weight:700;text-transform:uppercase}
+h3{font-size:1.35rem;font-weight:700;text-transform:uppercase;letter-spacing:.02em}
+p{margin:0}
+a{color:inherit}
+:focus-visible{outline:3px solid var(--yellow);outline-offset:3px}
+.tag{font:700 .82rem/1 var(--display);letter-spacing:.14em;text-transform:uppercase;color:var(--blue)}
+.lead{color:var(--muted);max-width:60ch}
+
+/* top bar */
+.top{border-bottom:2px solid var(--ink);background:var(--paper)}
+.top .wrap{display:flex;align-items:center;gap:12px;padding-block:10px}
+.top img{width:44px;height:44px;border-radius:10px;display:block}
+.brand{font:800 1.35rem/1 var(--display);text-transform:uppercase;letter-spacing:.03em;margin-right:auto}
+.brand span{color:var(--red)}
+.mini{font:700 1rem/1 var(--display);letter-spacing:.06em;text-transform:uppercase;text-decoration:none;border:2px solid var(--ink);padding:9px 12px;border-radius:4px;white-space:nowrap}
+
+/* hero */
+.hero{background-color:var(--bg);background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:28px 28px;border-bottom:2px solid var(--ink)}
+.hero .wrap{display:grid;gap:32px;padding-block:40px 48px;align-items:center}
+.pitch{display:flex;flex-direction:column;gap:18px;min-width:0}
+.cta{display:inline-flex;flex-direction:column;align-items:center;gap:4px;text-decoration:none;background:var(--yellow);color:var(--cta-ink);border:2px solid var(--cta-ink);border-radius:6px;padding:14px 22px;box-shadow:5px 5px 0 var(--ink);max-width:100%;text-align:center;transition:transform .12s,box-shadow .12s}
+.cta b{font:800 1.45rem/1.1 var(--display);text-transform:uppercase;letter-spacing:.02em}
+.cta small{font-size:.85rem;font-weight:600}
+.cta:hover{transform:translate(2px,2px);box-shadow:3px 3px 0 var(--ink)}
+.cta-row{display:flex;flex-wrap:wrap;gap:14px 20px;align-items:center}
+.cta-row span{color:var(--muted);font-size:.95rem}
+.sheet{background:var(--sheet);border:2px solid var(--ink);border-radius:4px;padding:8px;box-shadow:8px 8px 0 var(--line);min-width:0}
+.sheet img{display:block;width:100%;height:auto}
+.hero .sheet{transform:rotate(1.2deg);max-width:440px;justify-self:center}
+
+/* sections */
+section{padding-block:52px}
+.head{display:flex;flex-direction:column;gap:10px;margin-bottom:26px}
+.alt{background:var(--paper);border-block:1px solid var(--line)}
+
+/* features as sketch callouts */
+.feat{display:grid;gap:18px}
+.call{background:var(--paper);border:2px solid var(--ink);padding:16px 18px 18px;display:flex;flex-direction:column;gap:8px;min-width:0;position:relative}
+.alt .call{background:var(--bg)}
+.call::before{content:"";position:absolute;left:18px;top:-2px;width:46px;height:6px;background:var(--yellow)}
+.call p{color:var(--muted)}
+
+/* samples */
+.samples{display:grid;gap:22px}
+figure{margin:0;display:flex;flex-direction:column;gap:10px;min-width:0}
+figcaption{font:700 1.05rem/1.2 var(--display);letter-spacing:.08em;text-transform:uppercase}
+figcaption span{display:block;font:500 .92rem/1.4 var(--body);letter-spacing:0;text-transform:none;color:var(--muted)}
+
+/* who */
+.who{display:grid;gap:12px;list-style:none;margin:0;padding:0}
+.who li{border-left:6px solid var(--red);background:var(--paper);padding:12px 14px;min-width:0}
+.who li:nth-child(even){border-left-color:var(--blue)}
+.who b{display:block;font:700 1.2rem/1.15 var(--display);text-transform:uppercase;letter-spacing:.02em}
+.who span{color:var(--muted);font-size:.95rem}
+
+/* compare */
+.cmp{overflow-x:auto;border:2px solid var(--ink);background:var(--paper)}
+table{border-collapse:collapse;width:100%}
+th,td{text-align:left;padding:12px 14px;border-bottom:1px solid var(--line);vertical-align:top}
+tr:last-child td{border-bottom:0}
+thead th{font:700 1.05rem/1.2 var(--display);letter-spacing:.08em;text-transform:uppercase;border-bottom:2px solid var(--ink)}
+thead th:last-child,tbody td:last-child{background:color-mix(in srgb,var(--yellow) 22%,var(--paper));font-weight:600}
+tbody th{font-weight:600;color:var(--muted);width:26%}
+@media (max-width:560px){th,td{padding:10px 8px;font-size:.92rem}tbody th{width:auto}}
+
+/* offer as title block */
+.offer{display:grid;gap:28px;align-items:start}
+.block{border:3px solid var(--ink);background:var(--paper);display:grid;grid-template-columns:1fr 1fr}
+.cell{padding:10px 14px 12px;border-bottom:1.5px solid var(--ink);min-width:0}
+.cell:nth-child(odd){border-right:1.5px solid var(--ink)}
+.cell.full{grid-column:1/-1;border-right:0}
+.cell:last-child{border-bottom:0}
+.cell small{display:block;font:600 .72rem/1.3 var(--body);letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.cell b{font:700 1.3rem/1.2 var(--display);text-transform:uppercase;letter-spacing:.02em}
+.price b{font-size:3.4rem;font-weight:800;line-height:1;color:var(--red)}
+.cell .cta{display:flex;margin:6px 0 4px}
+.steps{display:flex;flex-direction:column;gap:14px;margin:0;padding:0;list-style:none;counter-reset:s}
+.steps li{counter-increment:s;display:grid;grid-template-columns:38px 1fr;gap:12px;align-items:start}
+.steps li::before{content:counter(s);font:800 1.3rem/38px var(--display);text-align:center;width:38px;height:38px;border:2px solid var(--ink);border-radius:50%;background:var(--yellow);color:var(--cta-ink)}
+.steps b{display:block}
+.steps span{color:var(--muted);font-size:.95rem}
+.note{border:1.5px dashed var(--line);padding:12px 14px;color:var(--muted);font-size:.95rem;margin-top:18px}
+#buynote{color:var(--muted);font-size:.9rem}#buynote b{font:600 .95rem var(--body);letter-spacing:0;color:var(--ink);user-select:all}
+
+footer{border-top:2px solid var(--ink);background:var(--paper)}
+footer .wrap{padding-block:20px 28px;display:flex;flex-direction:column;gap:6px;color:var(--muted);font-size:.9rem}
+
+@media (min-width:720px){
+.feat,.samples,.who{grid-template-columns:1fr 1fr}
+}
+@media (min-width:900px){
+.hero .wrap{grid-template-columns:1.1fr .9fr;padding-block:56px 64px}
+.offer{grid-template-columns:1fr 1fr}
+.who{grid-template-columns:repeat(4,1fr)}
+}
+@media (max-width:420px){.mini{display:none}}
+@media (prefers-reduced-motion:reduce){.cta{transition:none}}
+</style>
+</head>
+<body>
+
+<header class="top"><div class="wrap">
+<img src="logo.png" alt="Logo HaqLS" width="44" height="44">
+<span class="brand">Haq <span>Lifting Sketch</span></span>
+<a class="mini" href="#beli">RM10 · Beli</a>
+</div></header>
+
+<div class="hero"><div class="wrap">
+<div class="pitch">
+<span class="tag">Aplikasi Android untuk kerja mengangkat</span>
+<h1>Hasilkan lukisan lifting sketch profesional hanya dalam <em>1 klik!</em></h1>
+<p class="lead">Aplikasi Android Haq Lifting Sketch direka khas untuk Lifting Supervisor, jurutera dan kru tapak pembinaan. Jana lukisan teknikal yang tepat dan kemas terus dari telefon pintar anda, tanpa perisian komputer yang rumit.</p>
+<div class="cta-row">
+<a class="cta buy" href="#beli"><b>Muat Turun &amp; Aktifkan Sekarang</b><small>RM10 sahaja · Sekali bayar · Akses penuh</small></a>
+</div>
+</div>
+<div class="sheet"><img src="sample-mobile-crane.jpg" alt="Contoh lifting sketch mobile crane yang dijana oleh aplikasi: boom length 43 m, working radius 17 m, beban wall closure dengan webbing sling dan shackle" width="1160" height="1280"></div>
+</div></div>
+
+<section><div class="wrap">
+<div class="head"><span class="tag">Ciri-ciri utama</span><h2>Semua yang diperlukan untuk satu lifting sketch</h2></div>
+<div class="feat">
+<div class="call"><h3>Jana lukisan dengan 1 klik</h3><p>Antaramuka ringkas dan mesra pengguna. Masukkan maklumat asas, tekan satu butang, dan imej lifting sketch anda siap untuk disimpan atau dikongsi ke WhatsApp tapak.</p></div>
+<div class="call"><h3>2 pilihan jenis kren</h3><p>Pilih Mobile Crane atau Crawler Crane mengikut keperluan projek dan operasi mengangkat anda.</p></div>
+<div class="call"><h3>Muat naik imej beban sendiri</h3><p>Tidak terhad kepada bentuk asas. Tukar imej beban dengan gambar sebenar objek atau struktur yang ingin diangkat, terus dari galeri telefon.</p></div>
+<div class="call"><h3>Sling point boleh dilaras</h3><p>Seret kedudukan sling point mengikut pusat graviti (center of gravity) dan dimensi beban sebenar.</p></div>
+</div>
+</div></section>
+
+<section class="alt"><div class="wrap">
+<div class="head"><span class="tag">Contoh hasil</span><h2>Inilah lukisan yang anda dapat</h2><p class="lead">Kedua-dua lukisan ini dijana terus daripada aplikasi, lengkap dengan boom length, boom angle, working radius, boom tip height, butiran lifting gear dan title block.</p></div>
+<div class="samples">
+<figure><div class="sheet"><img src="sample-mobile-crane.jpg" alt="Lifting sketch mobile crane dengan beban lalai dan dua sling point" width="1160" height="1280" loading="lazy"></div><figcaption>Mobile Crane<span>Boom teleskopik, dengan lakaran beban lalai.</span></figcaption></figure>
+<figure><div class="sheet"><img src="sample-crawler-crane.jpg" alt="Lifting sketch crawler crane dengan imej beban yang dimuat naik sendiri" width="1160" height="1280" loading="lazy"></div><figcaption>Crawler Crane<span>Boom kekisi, dengan imej beban yang dimuat naik sendiri.</span></figcaption></figure>
+</div>
+</div></section>
+
+<section><div class="wrap">
+<div class="head"><span class="tag">Untuk siapa</span><h2>Siapa yang perlukan aplikasi ini?</h2><p class="lead">Sesiapa yang perlukan draf pantas untuk Toolbox Meeting atau semakan awal di tapak.</p></div>
+<ul class="who">
+<li><b>Lifting Supervisor</b><span>JKKP / DOSH</span></li>
+<li><b>Site Engineer</b><span>Perancangan kerja mengangkat</span></li>
+<li><b>Safety Officer</b><span>SHO / SSS</span></li>
+<li><b>Rigger &amp; Signalman</b><span>Rujukan kru di tapak</span></li>
+</ul>
+</div></section>
+
+<section class="alt"><div class="wrap">
+<div class="head"><span class="tag">Jimat masa</span><h2>Berbanding cara tradisional</h2></div>
+<div class="cmp"><table>
+<thead><tr><th scope="col"></th><th scope="col">Cara tradisional</th><th scope="col">Haq Lifting Sketch</th></tr></thead>
+<tbody>
+<tr><th scope="row">Masa</th><td>Berjam-jam melukis di PC atau melakar di atas kertas</td><td>Siap dalam masa kurang 1 minit</td></tr>
+<tr><th scope="row">Peralatan</th><td>Komputer dan perisian lukisan</td><td>Telefon Android sahaja</td></tr>
+<tr><th scope="row">Tempat</th><td>Di pejabat</td><td>Terus di tapak projek</td></tr>
+<tr><th scope="row">Perkongsian</th><td>Imbas atau ambil gambar kertas</td><td>Imej PNG terus ke WhatsApp</td></tr>
+</tbody></table></div>
+</div></section>
+
+<section id="beli"><div class="wrap">
+<div class="head"><span class="tag">Tawaran</span><h2>Dapatkan Haq Lifting Sketch</h2></div>
+<div class="offer">
+<div>
+<div class="block">
+<div class="cell full"><small>Produk</small><b>Haq Lifting Sketch · Aplikasi Android</b></div>
+<div class="cell price"><small>Harga</small><b>RM10</b></div>
+<div class="cell"><small>Bayaran</small><b>Sekali bayar</b></div>
+<div class="cell"><small>Format</small><b>Fail APK</b></div>
+<div class="cell"><small>Keperluan</small><b>Android 10 ke atas</b></div>
+<div class="cell full"><small>Jaminan</small><b>Sokongan teknikal jika ada masalah pemasangan</b></div>
+<div class="cell full"><a class="cta buy" href="#beli"><b>Muat Turun &amp; Aktifkan Sekarang</b><small>RM10 sahaja · Akses penuh</small></a><p id="buynote">Butang ini membuka WhatsApp kami: <b>+60 11-6552 9595</b></p></div>
+</div>
+</div>
+<div>
+<h3 style="margin-bottom:16px">Cara pemasangan ringkas</h3>
+<ol class="steps">
+<li><div><b>Buat bayaran RM10</b><span>Tekan butang Muat Turun &amp; Aktifkan Sekarang untuk hubungi kami di WhatsApp.</span></div></li>
+<li><div><b>Terima fail APK</b><span>Fail aplikasi dihantar kepada anda selepas bayaran disahkan.</span></div></li>
+<li><div><b>Pasang pada telefon</b><span>Buka fail APK dan benarkan pemasangan apabila diminta oleh Android.</span></div></li>
+<li><div><b>Mula melukis</b><span>Buka aplikasi, isi maklumat, dan eksport lifting sketch anda.</span></div></li>
+</ol>
+<p class="note">Lukisan yang dijana ialah lakaran tanpa skala (NTS) untuk rujukan dan perbincangan di tapak. Ia tidak menggantikan lifting plan yang disemak dan diluluskan oleh orang yang kompeten.</p>
+</div>
+</div>
+</div></section>
+
+<footer><div class="wrap">
+<span>Haq Lifting Sketch (HaqLS)</span>
+<span>Aplikasi Android untuk menjana lifting sketch dalam pandangan elevation.</span>
+</div></footer>
+
+<script>
+/* WhatsApp number and opening message. Every buy button on the page uses them. */
+var WA_NUMBER="601165529595",WA_TEXT="Salam, saya berminat nak beli aplikasi Haq Lifting Sketch (RM10).";
+(function(){
+var url="https://wa.me/"+WA_NUMBER+"?text="+encodeURIComponent(WA_TEXT);
+[].slice.call(document.querySelectorAll("a.buy")).forEach(function(a){a.href=url;a.target="_blank";a.rel="noopener"});
+})();
+</script>
+</body>
+</html>
