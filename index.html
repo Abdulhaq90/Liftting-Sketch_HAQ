@@ -358,15 +358,21 @@ function cut(t,n){return t.length>n?t.slice(0,n-1)+"…":t}
 function tc(s){return s.toUpperCase()}
 function cl(v,a,b){return Math.max(a,Math.min(b,v))}
 function ns(t,a){var e=document.createElementNS(NS,t);for(var k in a)e.setAttribute(k,a[k]);return e}
-function svgPt(e){var s=$("sk"),p=s.createSVGPoint();p.x=e.clientX;p.y=e.clientY;return p.matrixTransform(s.getScreenCTM().inverse())}
+function svgPt(e){var r=$("sk").getBoundingClientRect(),k=Math.min(r.width/600,r.height/660)||1;return{x:(e.clientX-r.left-(r.width-600*k)/2)/k,y:(e.clientY-r.top-(r.height-660*k)/2)/k}}
+/* Drag works from touch events first (reliable inside the Android app), pointer events cover mouse and pen. */
 function drag(el,start,move){
-var on=0,ox=0,oy=0;
-el.addEventListener("pointerdown",function(e){try{el.setPointerCapture(e.pointerId)}catch(x){}on=1;var q=svgPt(e),o=start();ox=q.x-o[0];oy=q.y-o[1];e.preventDefault()});
-el.addEventListener("pointermove",function(e){if(!on)return;var q=svgPt(e);move(q.x-ox,q.y-oy)});
-el.addEventListener("pointerup",function(){on=0});
-el.addEventListener("pointercancel",function(){on=0});
-el.addEventListener("touchstart",function(e){e.preventDefault()},{passive:false});
-el.addEventListener("touchmove",function(e){e.preventDefault()},{passive:false});
+var on=0,ox=0,oy=0,tid=null;
+function begin(p){var q=svgPt(p),o=start();ox=q.x-o[0];oy=q.y-o[1];on=1}
+function go(p){var q=svgPt(p);move(q.x-ox,q.y-oy)}
+function find(list){for(var i=0;i<list.length;i++)if(list[i].identifier===tid)return list[i];return null}
+el.addEventListener("touchstart",function(e){e.preventDefault();e.stopPropagation();var t=e.changedTouches[0];tid=t.identifier;begin(t)},{passive:false});
+el.addEventListener("touchmove",function(e){e.preventDefault();e.stopPropagation();var t=tid===null?null:find(e.touches);if(on&&t)go(t)},{passive:false});
+function tend(e){if(tid!==null&&!find(e.touches)){on=0;tid=null}}
+el.addEventListener("touchend",tend);el.addEventListener("touchcancel",tend);
+el.addEventListener("pointerdown",function(e){if(tid!==null)return;try{el.setPointerCapture(e.pointerId)}catch(x){}begin(e);e.preventDefault()});
+el.addEventListener("pointermove",function(e){if(on&&tid===null)go(e)});
+el.addEventListener("pointerup",function(){if(tid===null)on=0});
+el.addEventListener("pointercancel",function(){if(tid===null)on=0});
 }
 $("sk").addEventListener("dragstart",function(e){e.preventDefault()});
 
@@ -602,7 +608,7 @@ var cur="",dirty=0,FIELDS=["proj","dwg","by","radius","height","angle","boom","s
 function showStat(msg){$("curname").textContent=cur||"Untitled";$("savestat").textContent=msg||(dirty?"Not saved":(cur?"Saved":""))}
 function touch(){dirty=1;showStat()}
 document.querySelector(".lay").addEventListener("input",touch);
-$("sk").addEventListener("pointerup",touch);
+$("sk").addEventListener("pointerup",touch);$("sk").addEventListener("touchend",touch);
 document.querySelector(".form").addEventListener("click",function(e){if(e.target.closest("button"))touch()});
 function getState(){
 var f={},lab={};
